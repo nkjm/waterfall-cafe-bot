@@ -15,11 +15,13 @@ router.post('/', function(req, res, next) {
     res.status(200).end();
 
     // Signature Validation
+    /*
     if (!line.validateSignature(req.get('X-Line-Signature'), req.rawBody)){
         console.log('Signature validation failed.');
         return;
     }
     console.log("Signature validation succeeded.");
+    */
 
     // get today's menu
     let main = wfc.getTodaysMenu().then(
