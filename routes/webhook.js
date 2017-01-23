@@ -15,13 +15,11 @@ router.post('/', function(req, res, next) {
     res.status(200).end();
 
     // Signature Validation
-    /*
     if (!line.validateSignature(req.get('X-Line-Signature'), req.rawBody)){
         console.log('Signature validation failed.');
         return;
     }
     console.log("Signature validation succeeded.");
-    */
 
     // get today's menu
     let main = wfc.getTodaysMenu().then(
@@ -45,7 +43,7 @@ router.post('/', function(req, res, next) {
             let reply_token = req.body.events[0].replyToken;
             let messages = [{
                 type: "text",
-                text: "今日のPLATE Aは" + food_list.plate_a + "です。"
+                text: "今日のPLATE Aは" + food_list.plate_a.menu + "です。"
             }]
             return line.replyMessage(reply_token, messages);
         },
