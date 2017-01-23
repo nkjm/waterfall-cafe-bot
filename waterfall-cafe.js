@@ -18,7 +18,7 @@ module.exports = class WaterfallCafe {
                 headers: headers,
                 json: true,
             }, function (error, response, body) {
-                (error) ? reject(error) : resolve(body);
+                (error) ? reject(error) : resolve(body.items);
             });
         });
     }
