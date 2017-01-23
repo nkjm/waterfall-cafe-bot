@@ -29,12 +29,12 @@ router.post('/', function(req, res, next) {
             console.log("Got menu");
             console.log(response);
 
-            let food_list = [];
+            let food_list = {};
             for (let food of response){
                 food_list[food.plate] = food;
             }
 
-            if (food_list.length == 0){
+            if (food_list === {}){
                 console.log("Food list is 0.");
                 main.cancel();
                 return;

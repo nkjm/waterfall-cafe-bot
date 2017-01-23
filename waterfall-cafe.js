@@ -2,7 +2,7 @@
 
 let request = require('request');
 let Promise = require('bluebird');
-const API_BASE = "https://apex.oracle.com/pls/apex/evangelist/wfc";
+const API_BASE = "https://apex.oracle.com/pls/apex/" + process.env.ORACLE_WORKSPACE + "/wfc";
 
 module.exports = class WaterfallCafe {
 
