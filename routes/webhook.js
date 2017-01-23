@@ -27,7 +27,7 @@ router.post('/', function(req, res, next) {
     let main = wfc.getTodaysMenu().then(
         function(response){
             console.log("Got menu");
-            console.log(menu);
+            console.log(response);
 
             let food_list = [];
             for (let food of response){
