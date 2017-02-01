@@ -38,7 +38,7 @@ router.post('/', function(req, res, next) {
         console.log("Found incomplete conversation.");
 
         let action;
-        switch(conversation.intent){
+        switch(conversation.intent.action){
             case "play-music":
                 action = new action_play_music(conversation, line_event);
                 break;

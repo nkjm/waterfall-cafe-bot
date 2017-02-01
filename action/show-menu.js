@@ -108,11 +108,11 @@ module.exports = class ActionShowMenu {
         if (answer[Object.keys(answer)[0]] === null || answer[Object.keys(answer)[0]] == ""){
             return;
         }
-        console.log("adding context '" + Object.keys(answer)[0] + "'");
+        console.log("Adding context '" + Object.keys(answer)[0] + "'");
         Object.assign(this._conversation.confirmed, answer);
         delete this._conversation.to_confirm[Object.keys(answer)[0]];
         memory.put(this._line_event.source.userId, this._conversation);
-        console.log("we have " + Object.keys(this._conversation.to_confirm).length + " context to confirm.");
+        console.log("We have " + Object.keys(this._conversation.to_confirm).length + " context to confirm.");
     }
 
     run(){
