@@ -41,6 +41,8 @@ module.exports = class ActionShowMenu {
         if (Object.keys(this._conversation.to_confirm).length == 0 && this._required_context.length > 0 && Object.keys(this._conversation.confirmed).length == 0){
             this._conversation.to_confirm = this._required_context;
         }
+
+        console.log("we have " + Object.keys(this._conversation.to_confirm).length + " context to confirm.");
     }
 
     is_context_sufficient(){
@@ -99,9 +101,11 @@ module.exports = class ActionShowMenu {
     }
 
     add_context(answer){
+        console.log("adding context '" + Object.keys(answer)[0] + "'");
         Object.assign(this._conversation.confirmed, answer);
         delete this._conversation.to_confirm[Object.keys(answer)[0]];
         memory.put(this._line_event.source.userId, this._conversation);
+        console.log("we have " + Object.keys(this._conversation.to_confirm).length + " context to confirm.");
     }
 
     run(){
