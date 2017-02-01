@@ -38,7 +38,11 @@ module.exports = class ActionShowMenu {
         }
 
         // If this is the very first time of the conversation, we set to_confirm following required_context.
-        if (Object.keys(this._conversation.to_confirm).length == 0 && this._required_context.length > 0 && Object.keys(this._conversation.confirmed).length == 0){
+        if (
+            Object.keys(this._conversation.to_confirm).length == 0 &&
+            Object.keys(this._required_context).length > 0 &&
+            Object.keys(this._conversation.confirmed).length == 0
+        ){
             this._conversation.to_confirm = this._required_context;
         }
 
