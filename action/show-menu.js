@@ -88,7 +88,7 @@ module.exports = class ActionShowMenu {
                 console.log("Going to reply today's menu.");
                 let messages = [{
                     type: "text",
-                    text: "今日のPLATE Aは" + food_list.plate_a.menu + "です。"
+                    text: "今日のPLATE Aは" + food_list.a.menu + "です。"
                 }]
                 return line.replyMessage(that._line_event.replyToken, messages);
             },
