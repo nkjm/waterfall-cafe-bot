@@ -66,6 +66,7 @@ module.exports = class ActionShowMenu {
     }
 
     finish(conversation){
+        let that = this;
         return wfc.getTodaysMenu().then(
             function(response){
                 console.log("Got menu.");
@@ -80,8 +81,8 @@ module.exports = class ActionShowMenu {
                 }
 
                 // Update memory.
-                this._conversation.is_complete = true;
-                memory.put(this._line_event.source.userId, this._conversation);
+                that._conversation.is_complete = true;
+                memory.put(that._line_event.source.userId, that._conversation);
 
                 // reply to user.
                 console.log("Going to reply today's menu.");
@@ -89,7 +90,7 @@ module.exports = class ActionShowMenu {
                     type: "text",
                     text: "今日のPLATE Aは" + food_list.plate_a.menu + "です。"
                 }]
-                return line.replyMessage(this._line_event.replyToken, messages);
+                return line.replyMessage(that._line_event.replyToken, messages);
             },
             function(response){
                 return Promise.reject("Failed to get today's menu.");
