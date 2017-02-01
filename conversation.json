@@ -1,0 +1,7 @@
+{
+    intent: {},
+    confirmed: [],
+    to_confirm: [],
+    confirming: [],
+    is_complete: false // true | false
+}

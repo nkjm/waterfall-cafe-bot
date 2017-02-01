@@ -7,9 +7,11 @@ let router = express.Router();
 let Promise = require('bluebird');
 let apiai = require('apiai');
 let uuid = require('uuid/v4');
-let wfc = require('../waterfall-cafe');
+let memory = require('memory-cache');
 let line = require('../line');
-let action = require('../action');
+let action_play_music = require('../action/play-music');
+let action_show_menu = require('../action/show-menu');
+let action_faq = require('../action/faq');
 
 Promise.config({
     // Enable cancellation
@@ -28,6 +30,49 @@ router.post('/', function(req, res, next) {
 
     let line_event = req.body.events[0];
 
+    /*
+     * Recall the memory with this user.
+     */
+    let conversation = memory.get(line_event.source.userId);
+    if (conversation && !conversation.is_complete){
+        console.log("Found incomplete conversation.");
+
+        let action;
+        switch(conversation.intent){
+            case "play-music":
+                action = new action_play_music(conversation, line_event);
+                break;
+            case "show-menu":
+                action = new action_show_menu(conversation, line_event);
+                break;
+            default:
+                action = new action_faq(conversation, line_event);
+                break;
+        }
+        if (line_event.type == "message"){
+            let context = {};
+            context[Object.keys(conversation.confirming)[0]] = line_event.message.text;
+            action.add_context(context); // TBD: Need to process text in some way.
+        } else if (line_event.type == "postback"){
+            action.add_context(JSON.parse(line_event.postback.data));
+        }
+        action.run().then(
+            function(response){
+                console.log("End of webhook process.");
+            },
+            function(response){
+                console.log("Failed to get intent.");
+                console.log(response);
+            }
+        );
+        return;
+    }
+
+    console.log("Brand new conversation.");
+
+    /*
+     * It seems this conversation is about new intent. So we try to identify user's intent.
+     */
     let aiInstance = apiai(APIAI_CLIENT_ACCESS_TOKEN);
     let aiRequest = aiInstance.textRequest(line_event.message.text, {sessionId: uuid()});
     let gotIntent = new Promise(function(resolve, reject){
@@ -41,14 +86,38 @@ router.post('/', function(req, res, next) {
         function(response){
             console.log("Intent is " + response.result.action);
 
-            switch (response.result.action) {
-                case "tell-me-todays-menu":
-                    return action.tell_me_todays_menu(response.result, line_event);
+            // Initiate the conversation object.
+            let conversation = {
+                intent: response.result,
+                confirmed: {},
+                to_confirm: {},
+                confirming: null,
+                is_complete: false
+            }
+
+            let action;
+            switch (conversation.intent.action) {
+                case "show-menu":
+                    action = new action_show_menu(conversation, line_event);
+                    break;
+                case "play-music":
+                    action = new action_play_music(conversation, line_event);
                     break;
                 default:
-                    return action.unknown(response.result, line_event);
+                    action = new action_faq(conversation, line_event);
                     break;
             }
+
+            // api.ai return some parameters. we add them to context.
+            if (conversation.intent.parameters && Object.keys(conversation.intent.parameters).length > 0){
+                for (let param of Object.keys(conversation.intent.parameters)){
+                    let context = {};
+                    context[param] = conversation.intent.parameters[param];
+                    action.add_context(context);
+                }
+            }
+
+            return action.run();
         },
         function(response){
             console.log("Failed to get intent.");

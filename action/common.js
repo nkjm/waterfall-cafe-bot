@@ -2,24 +2,25 @@
 
 let request = require('request');
 let Promise = require('bluebird');
+let memory = require('memory-cache');
 let wfc = require('./waterfall-cafe');
 let line = require('./line');
 
-module.exports = class Action {
+module.exports = class ActionCommon {
+    static is_context_sufficient(){
 
-    static unknown(result, line_event){
-        // reply to user.
-        console.log("Going to apologize.");
-        let reply_token = line_event.replyToken;
-        let messages = [{
-            type: "text",
-            text: result.fulfillment.speech
-        }]
-        return line.replyMessage(reply_token, messages);
     }
 
-    static tell_me_todays_menu(result, line_event){
+    static collect(){
 
+    }
+
+    static action(){
+
+    }
+}
+
+    static show_todays_menu(conversation, line_event){
         return wfc.getTodaysMenu().then(
             function(response){
                 console.log("Got menu");
