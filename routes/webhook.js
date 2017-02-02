@@ -6,7 +6,6 @@ let express = require('express');
 let router = express.Router();
 let Promise = require('bluebird');
 let apiai = require('apiai');
-let uuid = require('uuid/v4');
 let memory = require('memory-cache');
 let line = require('../line');
 let action_play_music = require('../action/play-music');
@@ -74,7 +73,7 @@ router.post('/', function(req, res, next) {
      * It seems this conversation is about new intent. So we try to identify user's intent.
      */
     let aiInstance = apiai(APIAI_CLIENT_ACCESS_TOKEN);
-    let aiRequest = aiInstance.textRequest(line_event.message.text, {sessionId: uuid()});
+    let aiRequest = aiInstance.textRequest(line_event.message.text, {sessionId: line_event.source.userId});
     let gotIntent = new Promise(function(resolve, reject){
         aiRequest.on('response', function(response){
             resolve(response);
@@ -108,7 +107,7 @@ router.post('/', function(req, res, next) {
                     break;
             }
 
-            // api.ai return some parameters. we add them to context.
+            // If api.ai return some parameters. we add them to context.
             if (conversation.intent.parameters && Object.keys(conversation.intent.parameters).length > 0){
                 for (let param of Object.keys(conversation.intent.parameters)){
                     let context = {};

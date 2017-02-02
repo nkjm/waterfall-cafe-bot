@@ -46,7 +46,7 @@ module.exports = class ActionShowMenu {
             this._conversation.to_confirm = this._required_context;
         }
 
-        console.log("we have " + Object.keys(this._conversation.to_confirm).length + " context to confirm.");
+        console.log("We have " + Object.keys(this._conversation.to_confirm).length + " context to confirm.");
     }
 
     is_context_sufficient(){
