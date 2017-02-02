@@ -96,7 +96,7 @@ module.exports = class ActionShowMenu {
 
                     messages = [{
                         type: "text",
-                        text: "PLATE Aは" + food_list.a.menu + "です。"
+                        text: this._conversation.confirmed.date + "のPLATE Aは" + food_list.a.menu + "です。"
                     }];
                 }
 
