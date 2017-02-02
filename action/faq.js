@@ -1,22 +1,73 @@
 'use strict';
 
-let request = require('request');
 let Promise = require('bluebird');
 let memory = require('memory-cache');
-let wfc = require('../waterfall-cafe');
 let line = require('../line');
 
 module.exports = class ActionFaq {
 
-    static unknown(conversation, line_event){
-        // reply to user.
-        console.log("Going to apologize.");
-        let reply_token = line_event.replyToken;
-        let messages = [{
-            type: "text",
-            text: conversation.intent.fulfillment.speech
-        }]
-        return line.replyMessage(reply_token, messages);
+    constructor(conversation, line_event) {
+        this._conversation = conversation;
+        this._line_event = line_event;
+        this._required_parameter = {};
+
+        // If this is the very first time of the conversation, we set to_confirm following required_parameter.
+        if (
+            Object.keys(this._conversation.to_confirm).length == 0 &&
+            Object.keys(this._required_parameter).length > 0 &&
+            Object.keys(this._conversation.confirmed).length == 0
+        ){
+            this._conversation.to_confirm = this._required_parameter;
+        }
+
+        console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
     }
 
+    is_parameter_sufficient(){
+        if (Object.keys(this._conversation.to_confirm).length > 0){
+            return false;
+        }
+        return true;
+    }
+
+    collect(){
+        if (Object.keys(this._conversation.to_confirm).length == 0){
+            console.log("While collect() is called, there is no parameter to confirm.");
+            Promise.reject();
+            return;
+        }
+        let messages = [this._conversation.to_confirm[Object.keys(this._conversation.to_confirm)[0]].message_to_confirm];
+
+        // Update the memory.
+        this._conversation.confirming = Object.keys(this._conversation.to_confirm)[0];
+        memory.put(this._line_event.source.userId, this._conversation);
+
+        return line.replyMessage(this._line_event.replyToken, messages);
+    }
+
+    finish(){
+        let that = this;
+        messages = [{
+            type: "text",
+            text: that._conversation.intent.fulfillment.speech
+        }];
+        let promise = line.replyMessage(that._line_event.replyToken, messages);
+
+        // Update memory.
+        that._conversation.is_complete = true;
+        memory.put(that._line_event.source.userId, that._conversation);
+
+        return promise;
+    }
+
+    add_parameter(answer){
+
+    }
+
+    run(){
+        if (this.is_parameter_sufficient()){
+            return this.finish();
+        }
+        return this.collect();
+    }
 };

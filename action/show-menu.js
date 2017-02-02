@@ -1,6 +1,5 @@
 'use strict';
 
-let request = require('request');
 let Promise = require('bluebird');
 let memory = require('memory-cache');
 let wfc = require('../waterfall-cafe');
