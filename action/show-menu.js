@@ -12,7 +12,7 @@ module.exports = class ActionShowMenu {
     constructor(conversation, line_event) {
         this._conversation = conversation;
         this._line_event = line_event;
-        this._required_context = {
+        this._required_parameter = {
             date: {
                 message_to_confirm: {
                     type: "template",
@@ -23,34 +23,34 @@ module.exports = class ActionShowMenu {
                         actions: [{
                             type: "postback",
                             label: "昨日",
-                            data: JSON.stringify({date: yyyymmdd.yesterday()})
+                            data: "昨日"
                         },{
                             type: "postback",
                             label: "今日",
-                            data: JSON.stringify({date: yyyymmdd.today()})
+                            data: "今日"
                         },{
                             type: "postback",
                             label: "明日",
-                            data: JSON.stringify({date: yyyymmdd.tomorrow()})
+                            data: "明日"
                         }]
                     }
                 }
             }
         }
 
-        // If this is the very first time of the conversation, we set to_confirm following required_context.
+        // If this is the very first time of the conversation, we set to_confirm following required_parameter.
         if (
             Object.keys(this._conversation.to_confirm).length == 0 &&
-            Object.keys(this._required_context).length > 0 &&
+            Object.keys(this._required_parameter).length > 0 &&
             Object.keys(this._conversation.confirmed).length == 0
         ){
-            this._conversation.to_confirm = this._required_context;
+            this._conversation.to_confirm = this._required_parameter;
         }
 
-        console.log("We have " + Object.keys(this._conversation.to_confirm).length + " context to confirm.");
+        console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
     }
 
-    is_context_sufficient(){
+    is_parameter_sufficient(){
         if (Object.keys(this._conversation.to_confirm).length > 0){
             return false;
         }
@@ -59,15 +59,14 @@ module.exports = class ActionShowMenu {
 
     collect(){
         if (Object.keys(this._conversation.to_confirm).length == 0){
-            console.log("While collect() is called, there is no context to confirm.");
+            console.log("While collect() is called, there is no parameter to confirm.");
             Promise.reject();
             return;
         }
         let messages = [this._conversation.to_confirm[Object.keys(this._conversation.to_confirm)[0]].message_to_confirm];
 
         // Update the memory.
-        this._conversation.confirming = {};
-        this._conversation.confirming[Object.keys(this._conversation.to_confirm)[0]] = this._conversation.to_confirm[Object.keys(this._conversation.to_confirm)[0]];
+        this._conversation.confirming = Object.keys(this._conversation.to_confirm)[0];
         memory.put(this._line_event.source.userId, this._conversation);
 
         return line.replyMessage(this._line_event.replyToken, messages);
@@ -106,7 +105,7 @@ module.exports = class ActionShowMenu {
         );
     }
 
-    add_context(answer){
+    add_parameter(answer){
         let answer_key = Object.keys(answer)[0];
         let answer_value = answer[Object.keys(answer)[0]];
 
@@ -116,38 +115,37 @@ module.exports = class ActionShowMenu {
 
         // Manipulate the answer if required.
         if (answer_key == "date"){
-            // If this event is message, we need to identify yesterday or today or tomorrow.
-            if (this._line_event.type == "message"){
-                if (answer_value.match(/昨日/)){
-                    answer_value = yyyymmdd.yesterday();
-                } else if (answer_value.match(/今日/)){
-                    answer_value = yyyymmdd.today();
-                } else if (answer_value.match(/明日/)){
-                    answer_value = yyyymmdd.tomorrow();
-                } else {
-                    // We cannot identify the date.
-                    return;
-                }
-                answer[Object.keys(answer)[0]] = answer_value;
+            if (answer_value.match(/昨日/)){
+                answer_value = yyyymmdd.yesterday();
+            } else if (answer_value.match(/今日/)){
+                answer_value = yyyymmdd.today();
+            } else if (answer_value.match(/明日/)){
+                answer_value = yyyymmdd.tomorrow();
+            } else {
+                console.log("Assume when is yyyy-mm-dd.");
             }
+            answer[Object.keys(answer)[0]] = answer_value;
         }
 
-        console.log("Adding context '" + answer_key + "': " + answer_value + "'");
+        console.log("Adding parameter '" + answer_key + "': " + answer_value + "'");
 
-        // Add Context.
+        // Add parameter.
         Object.assign(this._conversation.confirmed, answer);
 
         // Remove item from to_confirm.
         delete this._conversation.to_confirm[answer_key];
+        if (this.conversation.confirming == answer_key){
+            this.conversation.confirming = null;
+        }
 
         // Update memory.
         memory.put(this._line_event.source.userId, this._conversation);
 
-        console.log("We have " + Object.keys(this._conversation.to_confirm).length + " context to confirm.");
+        console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
     }
 
     run(){
-        if (this.is_context_sufficient()){
+        if (this.is_parameter_sufficient()){
             return this.finish();
         }
         return this.collect();

@@ -48,13 +48,20 @@ router.post('/', function(req, res, next) {
                 action = new action_faq(conversation, line_event);
                 break;
         }
-        if (line_event.type == "message"){
-            let context = {};
-            context[Object.keys(conversation.confirming)[0]] = line_event.message.text;
-            action.add_context(context); // TBD: Need to process text in some way.
-        } else if (line_event.type == "postback"){
-            action.add_context(JSON.parse(line_event.postback.data));
+
+        // Add parameter if there is confirming parameter.
+        if (conversation.confirming){
+            if (line_event.type == "message"){
+                let parameter = {};
+                parameter[conversation.confirming] = line_event.message.text;
+                action.add_parameter(parameter);
+            } else if (line_event.type == "postback"){
+                let parameter = {};
+                parameter[conversation.confirming] = line_event.postback.data;
+                action.add_parameter(parameter);
+            }
         }
+
         action.run().then(
             function(response){
                 console.log("End of webhook process.");
@@ -107,12 +114,12 @@ router.post('/', function(req, res, next) {
                     break;
             }
 
-            // If api.ai return some parameters. we add them to context.
+            // If api.ai return some parameters. we add them to parameter.
             if (conversation.intent.parameters && Object.keys(conversation.intent.parameters).length > 0){
-                for (let param of Object.keys(conversation.intent.parameters)){
-                    let context = {};
-                    context[param] = conversation.intent.parameters[param];
-                    action.add_context(context);
+                for (let param_key of Object.keys(conversation.intent.parameters)){
+                    let parameter = {};
+                    parameter[param_key] = conversation.intent.parameters[param_key];
+                    action.add_parameter(parameter);
                 }
             }
 
