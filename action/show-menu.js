@@ -15,7 +15,7 @@ module.exports = class ActionShowMenu {
             date: {
                 message_to_confirm: {
                     type: "template",
-                    altText: "いつのメニューですか？",
+                    altText: "いつのメニューですか？昨日？今日？明日？",
                     template: {
                         type: "buttons",
                         text: "いつのメニューですか？",
