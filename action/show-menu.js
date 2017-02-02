@@ -76,7 +76,7 @@ module.exports = class ActionShowMenu {
         let that = this;
         return wfc.getMenu(that._conversation.confirmed.date).then(
             function(response){
-                let message;
+                let messages;
                 if (response.length == 0){
                     messages = [{
                         type: "text",
