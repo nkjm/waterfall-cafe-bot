@@ -76,28 +76,37 @@ module.exports = class ActionShowMenu {
         let that = this;
         return wfc.getMenu(that._conversation.confirmed.date).then(
             function(response){
-                console.log("Got menu.");
+                let message;
+                if (response.length == 0){
+                    messages = [{
+                        type: "text",
+                        text: "該当するメニューがないようです。"
+                    }];
+                } else {
+                    console.log("Got menu.");
 
-                let food_list = {};
-                for (let food of response){
-                    food_list[food.plate] = food;
+                    let food_list = {};
+                    for (let food of response){
+                        food_list[food.plate] = food;
+                    }
+
+                    if (food_list === {}){
+                        return Promise.reject("Food list is 0.")
+                    }
+
+                    messages = [{
+                        type: "text",
+                        text: "今日のPLATE Aは" + food_list.a.menu + "です。"
+                    }];
                 }
 
-                if (food_list === {}){
-                    return Promise.reject("Food list is 0.")
-                }
+                let promise = line.replyMessage(that._line_event.replyToken, messages);
 
                 // Update memory.
                 that._conversation.is_complete = true;
                 memory.put(that._line_event.source.userId, that._conversation);
 
-                // reply to user.
-                console.log("Going to reply today's menu.");
-                let messages = [{
-                    type: "text",
-                    text: "今日のPLATE Aは" + food_list.a.menu + "です。"
-                }]
-                return line.replyMessage(that._line_event.replyToken, messages);
+                return promise;
             },
             function(response){
                 return Promise.reject("Failed to get today's menu.");
