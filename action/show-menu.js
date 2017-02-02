@@ -127,15 +127,15 @@ module.exports = class ActionShowMenu {
             answer[Object.keys(answer)[0]] = answer_value;
         }
 
-        console.log("Adding parameter '" + answer_key + "': " + answer_value + "'");
+        console.log("Adding parameter {" + answer_key + ":'" + answer_value + "'}");
 
         // Add parameter.
         Object.assign(this._conversation.confirmed, answer);
 
         // Remove item from to_confirm.
         delete this._conversation.to_confirm[answer_key];
-        if (this.conversation.confirming == answer_key){
-            this.conversation.confirming = null;
+        if (this._conversation.confirming == answer_key){
+            this._conversation.confirming = null;
         }
 
         // Update memory.
