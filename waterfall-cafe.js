@@ -6,9 +6,9 @@ const API_BASE = "https://apex.oracle.com/pls/apex/" + process.env.ORACLE_WORKSP
 
 module.exports = class WaterfallCafe {
 
-    static getTodaysMenu(){
+    static getMenu(when){
         return new Promise(function(resolve, reject){
-            const url = API_BASE + "/menu/today";
+            const url = API_BASE + "/menu/" + when;
             const headers = {
                 'Content-Type': 'application/json'
             };

@@ -5,6 +5,7 @@ let Promise = require('bluebird');
 let memory = require('memory-cache');
 let wfc = require('../waterfall-cafe');
 let line = require('../line');
+let yyyymmdd = require('../yyyymmdd');
 
 module.exports = class ActionShowMenu {
 
@@ -22,15 +23,15 @@ module.exports = class ActionShowMenu {
                         actions: [{
                             type: "postback",
                             label: "昨日",
-                            data: JSON.stringify({date: "yesterday"})
+                            data: JSON.stringify({date: yyyymmdd.yesterday()})
                         },{
                             type: "postback",
                             label: "今日",
-                            data: JSON.stringify({date: "today"})
+                            data: JSON.stringify({date: yyyymmdd.today()})
                         },{
                             type: "postback",
                             label: "明日",
-                            data: JSON.stringify({date: "tomorrow"})
+                            data: JSON.stringify({date: yyyymmdd.tomorrow()})
                         }]
                     }
                 }
@@ -72,9 +73,9 @@ module.exports = class ActionShowMenu {
         return line.replyMessage(this._line_event.replyToken, messages);
     }
 
-    finish(conversation){
+    finish(){
         let that = this;
-        return wfc.getTodaysMenu().then(
+        return wfc.getMenu(that._conversation.confirmed.date).then(
             function(response){
                 console.log("Got menu.");
 
@@ -106,13 +107,42 @@ module.exports = class ActionShowMenu {
     }
 
     add_context(answer){
-        if (answer[Object.keys(answer)[0]] === null || answer[Object.keys(answer)[0]] == ""){
+        let answer_key = Object.keys(answer)[0];
+        let answer_value = answer[Object.keys(answer)[0]];
+
+        if (answer_value === null || answer_value == ""){
             return;
         }
-        console.log("Adding context '" + Object.keys(answer)[0] + "'");
+
+        // Manipulate the answer if required.
+        if (answer_key == "date"){
+            // If this event is message, we need to identify yesterday or today or tomorrow.
+            if (this._line_event.type == "message"){
+                if (answer_value.match(/昨日/)){
+                    answer_value = yyyymmdd.yesterday();
+                } else if (answer_value.match(/今日/)){
+                    answer_value = yyyymmdd.today();
+                } else if (answer_value.match(/明日/)){
+                    answer_value = yyyymmdd.tomorrow();
+                } else {
+                    // We cannot identify the date.
+                    return;
+                }
+                answer[Object.keys(answer)[0]] = answer_value;
+            }
+        }
+
+        console.log("Adding context '" + answer_key + "': " + answer_value + "'");
+
+        // Add Context.
         Object.assign(this._conversation.confirmed, answer);
-        delete this._conversation.to_confirm[Object.keys(answer)[0]];
+
+        // Remove item from to_confirm.
+        delete this._conversation.to_confirm[answer_key];
+
+        // Update memory.
         memory.put(this._line_event.source.userId, this._conversation);
+
         console.log("We have " + Object.keys(this._conversation.to_confirm).length + " context to confirm.");
     }
 
@@ -122,5 +152,4 @@ module.exports = class ActionShowMenu {
         }
         return this.collect();
     }
-
 };
