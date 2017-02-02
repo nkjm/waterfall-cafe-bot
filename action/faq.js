@@ -47,7 +47,7 @@ module.exports = class ActionFaq {
 
     finish(){
         let that = this;
-        messages = [{
+        let messages = [{
             type: "text",
             text: that._conversation.intent.fulfillment.speech
         }];
