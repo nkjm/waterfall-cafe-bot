@@ -65,7 +65,8 @@ module.exports = class ActionShowMenu {
         let messages = [this._conversation.to_confirm[Object.keys(this._conversation.to_confirm)[0]].message_to_confirm];
 
         // Update the memory.
-        this._conversation.confirming = this._conversation.to_confirm[Object.keys(this._conversation.to_confirm)[0]];
+        this._conversation.confirming = {};
+        this._conversation.confirming[Object.keys(this._conversation.to_confirm)[0]] = this._conversation.to_confirm[Object.keys(this._conversation.to_confirm)[0]];
         memory.put(this._line_event.source.userId, this._conversation);
 
         return line.replyMessage(this._line_event.replyToken, messages);
