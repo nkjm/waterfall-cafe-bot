@@ -36,6 +36,11 @@ router.post('/', function(req, res, next) {
     if (conversation && !conversation.is_complete){
         console.log("Found incomplete conversation.");
 
+        // If this event is not supported, we just skip.
+        if (line_event.type != "message" && line_event.type != "postback"){
+            return;
+        }
+
         let action;
         switch(conversation.intent.action){
             case "play-music":
@@ -74,11 +79,17 @@ router.post('/', function(req, res, next) {
         return;
     }
 
-    console.log("Brand new conversation.");
 
     /*
      * It seems this conversation is about new intent. So we try to identify user's intent.
      */
+
+     // If this event is not supported, we just skip.
+    if (line_event.type != "message"){
+        return;
+    }
+
+    console.log("Brand new conversation.");
     let aiInstance = apiai(APIAI_CLIENT_ACCESS_TOKEN);
     let aiRequest = aiInstance.textRequest(line_event.message.text, {sessionId: line_event.source.userId});
     let gotIntent = new Promise(function(resolve, reject){
