@@ -115,6 +115,9 @@ module.exports = class ActionChangeLightColor {
             label: "グリーン",
             code: "000800"
         },{
+            label: "ピンク",
+            code: "FF69B4"
+        },{
             label: "紫",
             code: "800080"
         },{
