@@ -98,8 +98,8 @@ module.exports = class ActionChangeLightColor {
         // Replace color name with color code.
         if (answer_key == "color"){
             for (let color_mapping of color_mappings){
-                if (answer_value == color.mapping.label){
-                    answer_value = color.mapping.code;
+                if (answer_value == color_mapping.label){
+                    answer_value = color_mapping.code;
                 }
             }
             answer[Object.keys(answer)[0]] = answer_value;
