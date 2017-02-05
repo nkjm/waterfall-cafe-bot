@@ -93,6 +93,21 @@ module.exports = class ActionChangeLightColor {
         },{
             label: "黄",
             code: "ffff00"
+        },{
+            label: "橙",
+            code: "FFA500"
+        },{
+            label: "緑",
+            code: "000800"
+        },{
+            label: "紫",
+            code: "800080"
+        },{
+            label: "栗",
+            code: "800000"
+        },{
+            label: "茶",
+            code: "800000"
         }];
 
         // Replace color name with color code.
