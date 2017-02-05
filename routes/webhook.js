@@ -12,6 +12,7 @@ let action_play_music = require('../action/play-music');
 let action_show_menu = require('../action/show-menu');
 let action_turn_on_light = require('../action/turn-on-light');
 let action_turn_off_light = require('../action/turn-off-light');
+let action_change_light_color = require('../action/change-light-color');
 let action_faq = require('../action/faq');
 
 Promise.config({
@@ -56,6 +57,9 @@ router.post('/', function(req, res, next) {
                 break;
             case "turn-off-light":
                 action = new action_turn_off_light(conversation, line_event);
+                break;
+            case "change-light-color":
+                action = new action_change_light_color(conversation, line_event);
                 break;
             default:
                 action = new action_faq(conversation, line_event);
@@ -133,6 +137,9 @@ router.post('/', function(req, res, next) {
                     break;
                 case "turn-off-light":
                     action = new action_turn_off_light(conversation, line_event);
+                    break;
+                case "change-light-color":
+                    action = new action_change_light_color(conversation, line_event);
                     break;
                 default:
                     action = new action_faq(conversation, line_event);
