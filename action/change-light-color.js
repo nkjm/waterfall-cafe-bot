@@ -88,19 +88,37 @@ module.exports = class ActionChangeLightColor {
             label: "青",
             code: "0000ff"
         },{
+            label: "ブルー",
+            code: "0000ff"
+        },{
             label: "赤",
+            code: "ff0000"
+        },{
+            label: "レッド",
             code: "ff0000"
         },{
             label: "黄",
             code: "ffff00"
         },{
+            label: "イエロー",
+            code: "ffff00"
+        },{
             label: "橙",
+            code: "FFA500"
+        },{
+            label: "オレンジ",
             code: "FFA500"
         },{
             label: "緑",
             code: "000800"
         },{
+            label: "グリーン",
+            code: "000800"
+        },{
             label: "紫",
+            code: "800080"
+        },{
+            label: "パープル",
             code: "800080"
         },{
             label: "栗",
@@ -108,12 +126,15 @@ module.exports = class ActionChangeLightColor {
         },{
             label: "茶",
             code: "800000"
+        },{
+            label: "ブラウン",
+            code: "800000"
         }];
 
         // Replace color name with color code.
         if (answer_key == "color"){
             for (let color_mapping of color_mappings){
-                if (answer_value == color_mapping.label){
+                if (answer_value.replace("色", "") == color_mapping.label){
                     answer_value = color_mapping.code;
                 }
             }
