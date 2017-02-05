@@ -10,6 +10,8 @@ let memory = require('memory-cache');
 let line = require('../line');
 let action_play_music = require('../action/play-music');
 let action_show_menu = require('../action/show-menu');
+let action_turn_on_light = require('../action/turn-on-light');
+let action_turn_off_light = require('../action/turn-off-light');
 let action_faq = require('../action/faq');
 
 Promise.config({
@@ -48,6 +50,12 @@ router.post('/', function(req, res, next) {
                 break;
             case "show-menu":
                 action = new action_show_menu(conversation, line_event);
+                break;
+            case "turn-on-light":
+                action = new action_turn_on_light(conversation, line_event);
+                break;
+            case "turn-off-light":
+                action = new action_turn_off_light(conversation, line_event);
                 break;
             default:
                 action = new action_faq(conversation, line_event);
@@ -119,6 +127,12 @@ router.post('/', function(req, res, next) {
                     break;
                 case "play-music":
                     action = new action_play_music(conversation, line_event);
+                    break;
+                case "turn-on-light":
+                    action = new action_turn_on_light(conversation, line_event);
+                    break;
+                case "turn-off-light":
+                    action = new action_turn_off_light(conversation, line_event);
                     break;
                 default:
                     action = new action_faq(conversation, line_event);
