@@ -102,12 +102,14 @@ module.exports = class ActionShowMenu {
                     }];
                     for (let food of response){
                         if (food.plate && food.menu){
-                            messages[0].text += plate_mapping[food.plate] + "は" + food.menu + "、\n";
+                            messages[0].text += plate_mapping[food.plate] + "は「" + food.menu + "」(" + food.calorie || "?" + " kcal)、\n";
                         }
                     }
 
                     if (messages[0].text == ""){
                         return Promise.reject("Food list is 0.")
+                    } else {
+                        messages[0].text += "です。";
                     }
                 }
 
