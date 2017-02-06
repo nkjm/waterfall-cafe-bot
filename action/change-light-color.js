@@ -37,6 +37,9 @@ const color_mappings = [{
     label: "ピンク",
     code: "FF69B4"
 },{
+    label: "桃",
+    code: "FF69B4"
+},{
     label: "紫",
     code: "800080"
 },{
@@ -51,6 +54,15 @@ const color_mappings = [{
 },{
     label: "ブラウン",
     code: "800000"
+},{
+    label: "琥珀",
+    code: "bf783a"
+},{
+    label: "金",
+    code: "e6b422"
+},{
+    label: "銀",
+    code: "afafb0"
 }];
 
 let Promise = require('bluebird');
