@@ -95,7 +95,8 @@ module.exports = class ActionShowMenu {
 
                     messages = [{
                         type: "text",
-                        text: "PLATE Aは" + food_list.a.menu + "です。"
+                        text: "PLATE Aは" + food_list.a.menu + "、\
+PLATE Bは" + food_list.b.menu + "です。"
                     }];
                 }
 
