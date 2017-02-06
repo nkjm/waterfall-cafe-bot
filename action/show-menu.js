@@ -144,7 +144,9 @@ module.exports = class ActionShowMenu {
             } else if (answer_value.match(/明日/)){
                 answer_value = yyyymmdd.tomorrow();
             } else {
-                console.log("Assume when is yyyy-mm-dd.");
+                console.log("Unable to identify date.");
+                this._conversation.to_confirm[answer_key].message_to_confirm.text = "いつのメニューなのかわかりませんでした。もう一度、端的に昨日、今日、明日のどれか教えてもらえませんか？";
+                return;
             }
             answer[Object.keys(answer)[0]] = answer_value;
         }
