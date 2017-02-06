@@ -88,8 +88,11 @@ router.post('/', function(req, res, next) {
                 console.log("End of webhook process.");
             },
             function(response){
-                console.log("Failed to get intent.");
+                console.log("Failed to run the action.");
                 console.log(response);
+
+                // Clear memory.
+                memory.put(line_event.source.userId, null);
             }
         );
         return;
@@ -174,6 +177,9 @@ router.post('/', function(req, res, next) {
         function(response){
             console.log("Failed to process action.");
             console.log(response);
+
+            // Clear memory.
+            memory.put(line_event.source.userId, null);
         }
     )
 });

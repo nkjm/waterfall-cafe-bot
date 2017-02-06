@@ -110,13 +110,16 @@ module.exports = class ActionShowCalorie {
                     }
 
                     if (!calorie){
-                        return Promise.reject("Plate not found.");
+                        messages = [{
+                            type: "text",
+                            text: "不思議なことに" + plate_mapping[that._conversation.confirmed.plate] + "のカロリー情報が見つかりませんでした。ごめんね。"
+                        }]
+                    } else {
+                        messages = [{
+                            type: "text",
+                            text: plate_mapping[that._conversation.confirmed.plate] + "は" + calorie + "kcalです。"
+                        }]
                     }
-
-                    messages = [{
-                        type: "text",
-                        text: plate_mapping[that._conversation.confirmed.plate] + "は" + calorie + "kcalです。"
-                    }]
                 }
 
                 let promise = line.replyMessage(that._line_event.replyToken, messages);

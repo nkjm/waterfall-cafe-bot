@@ -107,7 +107,7 @@ module.exports = class ActionShowMenu {
                     }
 
                     if (messages[0].text == ""){
-                        return Promise.reject("Food list is 0.")
+                        messages[0].text == "おかしいなぁ。メニューが見当たりませんでした。ごめんね。";
                     } else {
                         messages[0].text += "です。";
                     }
