@@ -1,10 +1,21 @@
 'use strict';
 
+const plate_mapping = {
+    a: "Plate A",
+    b: "Plate B",
+    don: "丼セット",
+    noodle: "Noodle",
+    pasta: "パスタ",
+    p600: "Plate 600"
+}
+
 let Promise = require('bluebird');
 let memory = require('memory-cache');
 let wfc = require('../waterfall-cafe');
 let line = require('../line');
 let yyyymmdd = require('../yyyymmdd');
+
+
 
 module.exports = class ActionShowMenu {
 
@@ -84,19 +95,20 @@ module.exports = class ActionShowMenu {
                 } else {
                     console.log("Got menu.");
 
-                    let food_list = {};
-                    for (let food of response){
-                        food_list[food.plate] = food;
-                    }
-
-                    if (food_list === {}){
-                        return Promise.reject("Food list is 0.")
-                    }
-
+                    // Generate text composed of food menu.
                     messages = [{
                         type: "text",
-                        text: "PLATE Aは" + (food_list.a.menu || "未登録") + "、\nPLATE Bは" + (food_list.b.menu || "未登録") + "、\nPLATE 600は" + (food_list.p600.menu || "未登録") + "、\n丼セットは" + (food_list.don.menu || "未登録") + "、です。"
+                        text: ""
                     }];
+                    for (let food of response){
+                        if (food.plate && food.menu){
+                            messages[0].text += plate_mapping[food.plate] + "は" + food.menu + "、\n";
+                        }
+                    }
+
+                    if (messages[0].text == ""){
+                        return Promise.reject("Food list is 0.")
+                    }
                 }
 
                 let promise = line.replyMessage(that._line_event.replyToken, messages);
