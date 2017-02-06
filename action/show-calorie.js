@@ -17,7 +17,7 @@ let yyyymmdd = require('../yyyymmdd');
 
 
 
-module.exports = class ActionShowMenu {
+module.exports = class ActionShowCalorie {
 
     constructor(conversation, line_event) {
         this._conversation = conversation;
@@ -44,6 +44,12 @@ module.exports = class ActionShowMenu {
                             data: "明日"
                         }]
                     }
+                }
+            },
+            plate: {
+                message_to_confirm: {
+                    type: "text",
+                    text: "どのプレートですか？"
                 }
             }
         }
@@ -95,22 +101,22 @@ module.exports = class ActionShowMenu {
                 } else {
                     console.log("Got menu.");
 
-                    // Generate text composed of food menu.
-                    messages = [{
-                        type: "text",
-                        text: ""
-                    }];
+                    // Identify the calorie.
+                    let calorie;
                     for (let food of response){
-                        if (food.plate && food.menu){
-                            messages[0].text += plate_mapping[food.plate] + "は「" + food.menu + "」、\n";
+                        if (food.plate == that._conversation.confirmed.plate){
+                            calorie = food.calorie;
                         }
                     }
 
-                    if (messages[0].text == ""){
-                        return Promise.reject("Food list is 0.")
-                    } else {
-                        messages[0].text += "です。";
+                    if (!calorie){
+                        return Promise.reject("Plate not found.");
                     }
+
+                    messages = [{
+                        type: "text",
+                        text: plate_mapping[that._conversation.confirmed.plate] + "は" + calorie + "kcalです。"
+                    }]
                 }
 
                 let promise = line.replyMessage(that._line_event.replyToken, messages);
