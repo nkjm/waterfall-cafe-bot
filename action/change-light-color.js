@@ -1,5 +1,58 @@
 'use strict';
 
+const color_mappings = [{
+    label: "青",
+    code: "0000ff"
+},{
+    label: "ブルー",
+    code: "0000ff"
+},{
+    label: "赤",
+    code: "ff0000"
+},{
+    label: "レッド",
+    code: "ff0000"
+},{
+    label: "黄",
+    code: "ffff00"
+},{
+    label: "イエロー",
+    code: "ffff00"
+},{
+    label: "橙",
+    code: "FFA500"
+},{
+    label: "オレンジ",
+    code: "FFA500"
+},{
+    label: "ネイビー",
+    code: "000080"
+},{
+    label: "緑",
+    code: "000800"
+},{
+    label: "グリーン",
+    code: "000800"
+},{
+    label: "ピンク",
+    code: "FF69B4"
+},{
+    label: "紫",
+    code: "800080"
+},{
+    label: "パープル",
+    code: "800080"
+},{
+    label: "栗",
+    code: "800000"
+},{
+    label: "茶",
+    code: "800000"
+},{
+    label: "ブラウン",
+    code: "800000"
+}];
+
 let Promise = require('bluebird');
 let memory = require('memory-cache');
 let line = require('../line');
@@ -14,7 +67,7 @@ module.exports = class ActionChangeLightColor {
             color: {
                 message_to_confirm: {
                     type: "text",
-                    text: "何色にしますか？"
+                    text: "お任せを。何色にしますか？"
                 }
             }
         }
@@ -84,64 +137,23 @@ module.exports = class ActionChangeLightColor {
             return;
         }
 
-        const color_mappings = [{
-            label: "青",
-            code: "0000ff"
-        },{
-            label: "ブルー",
-            code: "0000ff"
-        },{
-            label: "赤",
-            code: "ff0000"
-        },{
-            label: "レッド",
-            code: "ff0000"
-        },{
-            label: "黄",
-            code: "ffff00"
-        },{
-            label: "イエロー",
-            code: "ffff00"
-        },{
-            label: "橙",
-            code: "FFA500"
-        },{
-            label: "オレンジ",
-            code: "FFA500"
-        },{
-            label: "緑",
-            code: "000800"
-        },{
-            label: "グリーン",
-            code: "000800"
-        },{
-            label: "ピンク",
-            code: "FF69B4"
-        },{
-            label: "紫",
-            code: "800080"
-        },{
-            label: "パープル",
-            code: "800080"
-        },{
-            label: "栗",
-            code: "800000"
-        },{
-            label: "茶",
-            code: "800000"
-        },{
-            label: "ブラウン",
-            code: "800000"
-        }];
-
         // Replace color name with color code.
         if (answer_key == "color"){
+            let found_color = false;
             for (let color_mapping of color_mappings){
                 if (answer_value.replace("色", "") == color_mapping.label){
                     answer_value = color_mapping.code;
+                    found_color = true;
                 }
             }
-            answer[Object.keys(answer)[0]] = answer_value;
+            if (found_color){
+                console.log("Color identified.");
+                answer[Object.keys(answer)[0]] = answer_value;
+            } else {
+                console.log("Unable to identify color.");
+                this._conversation.to_confirm[answer_key].message_to_confirm.text = "色が特定できませんでした。もう一度、端的に色だけ教えてもらえませんか？";
+                return;
+            }
         }
 
         console.log("Adding parameter {" + answer_key + ":'" + answer_value + "'}");

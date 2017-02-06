@@ -90,7 +90,7 @@ module.exports = class ActionShowMenu {
                 if (response.length == 0){
                     messages = [{
                         type: "text",
-                        text: "該当するメニューがないようです。"
+                        text: "あら、該当するメニューがないようです。"
                     }];
                 } else {
                     console.log("Got menu.");
