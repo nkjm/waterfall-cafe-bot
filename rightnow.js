@@ -57,6 +57,7 @@ module.exports = class RightNow {
                             if(result.ContentListResponse.SummaryContents.SummaryContentList.length > 0){
                                 for (var i = 0; i < result.ContentListResponse.SummaryContents.SummaryContentList.length; i ++) {
                                     console.log(result.ContentListResponse.SummaryContents.SummaryContentList[i]);
+                                    console.log(result.ContentListResponse.SummaryContents.SummaryContentList[i].ContentOrigin);
                                 }
                                 return resolve(result.ContentListResponse.SummaryContents.SummaryContentList[0]);
                             } else {
