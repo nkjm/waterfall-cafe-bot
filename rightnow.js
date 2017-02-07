@@ -67,7 +67,9 @@ module.exports = class RightNow {
                             // Get full content using content id.
                             let content_template = {
                                 ID: {
-                                    id: content_id
+                                    attributes: {
+                                        id: content_id
+                                    }
                                 },
                                 SecurityOptions: {},
                                 AccessLevels: {},
