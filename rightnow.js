@@ -24,7 +24,7 @@ module.exports = class RightNow {
                 client.addSoapHeader({
                     ClientInfoHeader: {
                         AppID : APP_API_ID
-                    }},          //soapHeader Object({rootName: {name: "value"}}) or strict xml-string
+                    }},         //soapHeader Object({rootName: {name: "value"}}) or strict xml-string
                     '',         //name Unknown parameter (it could just a empty string)
                     'rnm_v1',   //namespace prefix of xml namespace
                     ''          //xmlns URI
@@ -52,22 +52,15 @@ module.exports = class RightNow {
                             console.log("Failed to serach.");
                             return reject(err);
                         }
-                        console.log(result);
 
                         if (result.ContentListResponse.SummaryContents && result.ContentListResponse.SummaryContents.SummaryContentList){
-                            if(result.ContentListResponse.SummaryContents.SummaryContentList.length>0){
+                            if(result.ContentListResponse.SummaryContents.SummaryContentList.length > 0){
                                 for (var i = 0; i < result.ContentListResponse.SummaryContents.SummaryContentList.length; i ++) {
-                                    console.log('/***********     Result ' + (i+1) + '     ***********/');
-                                    console.log('Title :' + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList[i].Title);
-                                    console.log('Excerpt :'  + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList[i].Excerpt);
-                                    console.log('/***********     Result ' + (i+1) + '     ***********/');
+                                    console.log(result.ContentListResponse.SummaryContents.SummaryContentList[i]);
                                 }
-                                return resolve(result.ContentListResponse.SummaryContents.SummaryContentList);
+                                return resolve(result.ContentListResponse.SummaryContents.SummaryContentList[0]);
                             } else {
-                                console.log('/***********     Result      ***********/');
-                                console.log('Title :' + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList.Title);
-                                console.log('Excerpt :'  + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList.Excerpt);
-                                console.log('/***********     Result      ***********/');
+                                console.log(result.ContentListResponse.SummaryContents.SummaryContentList);
                                 return resolve(result.ContentListResponse.SummaryContents.SummaryContentList);
                             }
                         } else {
