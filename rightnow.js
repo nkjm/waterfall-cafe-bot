@@ -43,7 +43,7 @@ module.exports = class RightNow {
 
                     console.log("Going to search '" + question + "'");
                     client.GetSmartAssistantSearch({
-                        SessionToken: result.SessionToken,
+                        KnowledgeInteractionId: result.SessionToken,
                         Body: question,
                         Subject: question,
                         Limit: 5
