@@ -38,40 +38,43 @@ module.exports = class RightNow {
                     if (err) {
                         console.log("Failed to start interaction.");
                         return reject("Failed to start interaction.");
-                    } else {
-                        client.GetSmartAssistantSearch({
-                            SessionToken: result.SessionToken,
-                            Body: question,
-                            Subject: question,
-                            Limit: 5
-                        }, function(err, result){
-                            if (err){
-                                console.log("Failed GetSmartAssistantSearch.");
-                                console.log(result);
-                                return reject(err);
-                            }
-                            console.log(result);
-                            if (result.ContentListResponse.SummaryContents && result.ContentListResponse.SummaryContents.SummaryContentList){
-                                if(result.ContentListResponse.SummaryContents.SummaryContentList.length>0){
-                                    for (var i = 0; i < result.ContentListResponse.SummaryContents.SummaryContentList.length; i ++) {
-                                        console.log('/***********     Result ' + (i+1) + '     ***********/');
-                                        console.log('Title :' + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList[i].Title);
-                                        console.log('Excerpt :'  + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList[i].Excerpt);
-                                        console.log('/***********     Result ' + (i+1) + '     ***********/');
-                                    }
-                                    return resolve(result.ContentListResponse.SummaryContents.SummaryContentList);
-                                } else {
-                                    console.log('/***********     Result      ***********/');
-                                    console.log('Title :' + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList.Title);
-                                    console.log('Excerpt :'  + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList.Excerpt);
-                                    console.log('/***********     Result      ***********/');
-                                    return resolve(result.ContentListResponse.SummaryContents.SummaryContentList);
-                                }
-                            } else {
-                                return resolve("No Content found.");
-                            }
-                        }, options);
                     }
+                    console.log("Interaction started.");
+                    console.log(result);
+
+                    console.log("Going to search '" + question + "'");
+                    client.GetSmartAssistantSearch({
+                        SessionToken: result.SessionToken,
+                        Body: question,
+                        Subject: question,
+                        Limit: 5
+                    }, function(err, result){
+                        if (err){
+                            console.log("Failed GetSmartAssistantSearch.");
+                            return reject(err);
+                        }
+                        console.log(result);
+
+                        if (result.ContentListResponse.SummaryContents && result.ContentListResponse.SummaryContents.SummaryContentList){
+                            if(result.ContentListResponse.SummaryContents.SummaryContentList.length>0){
+                                for (var i = 0; i < result.ContentListResponse.SummaryContents.SummaryContentList.length; i ++) {
+                                    console.log('/***********     Result ' + (i+1) + '     ***********/');
+                                    console.log('Title :' + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList[i].Title);
+                                    console.log('Excerpt :'  + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList[i].Excerpt);
+                                    console.log('/***********     Result ' + (i+1) + '     ***********/');
+                                }
+                                return resolve(result.ContentListResponse.SummaryContents.SummaryContentList);
+                            } else {
+                                console.log('/***********     Result      ***********/');
+                                console.log('Title :' + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList.Title);
+                                console.log('Excerpt :'  + '\n' + result.ContentListResponse.SummaryContents.SummaryContentList.Excerpt);
+                                console.log('/***********     Result      ***********/');
+                                return resolve(result.ContentListResponse.SummaryContents.SummaryContentList);
+                            }
+                        } else {
+                            return resolve("No Content found.");
+                        }
+                    }, options);
                 },
                 options);
             });
