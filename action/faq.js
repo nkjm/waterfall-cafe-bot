@@ -48,7 +48,7 @@ module.exports = class ActionFaq {
 
     finish(){
         let that = this;
-        rightnow.searchAnswer(that._line_event.message.text).then(
+        return rightnow.searchAnswer(that._line_event.message.text).then(
             function(response){
                 let messages;
                 if (!response){
