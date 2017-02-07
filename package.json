@@ -19,6 +19,7 @@
     "morgan": "~1.6.1",
     "request": "^2.79.0",
     "serve-favicon": "~2.3.0",
-    "soap": "^0.18.0"
+    "soap": "^0.18.0",
+    "striptags": "^3.0.1"
   }
 }

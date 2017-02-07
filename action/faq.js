@@ -2,6 +2,7 @@
 
 let Promise = require('bluebird');
 let memory = require('memory-cache');
+let striptags = require('striptags');
 let line = require('../line');
 let rightnow = require('../rightnow');
 
@@ -57,10 +58,9 @@ module.exports = class ActionFaq {
                         text: that._conversation.intent.fulfillment.speech
                     }];
                 } else {
-                    console.log(response);
                     messages = [{
                         type: "text",
-                        text: "回答ありました！"
+                        text: striptags(response.solution)
                     }];
                 }
                 let promise = line.replyMessage(that._line_event.replyToken, messages);
