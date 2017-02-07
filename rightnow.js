@@ -60,7 +60,7 @@ module.exports = class RightNow {
                             let content_id;
                             if(result.ContentListResponse.SummaryContents.SummaryContentList.length > 0){
                                 content_id = result.ContentListResponse.SummaryContents.SummaryContentList[0].ID.attributes.id;
-                                console.log(result.ContentListResponse.SummaryContents.SummaryContentList[0].SecurityOptions);
+                                console.log(result.ContentListResponse.SummaryContents.SummaryContentList[0];
                             } else {
                                 content_id = result.ContentListResponse.SummaryContents.SummaryContentList.ID.attributes.id;
                             }
@@ -90,7 +90,7 @@ module.exports = class RightNow {
                             }, function(err, result){
                                 if (err){
                                     console.log("Failed to GetContent.");
-                                    console.log(err);
+                                    //console.log(err);
                                     //console.log(result);
                                     return reject(err);
                                 }
