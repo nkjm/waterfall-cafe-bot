@@ -6,6 +6,7 @@ let memory = require("memory-cache");
 const RN_USER = process.env.RN_USER;
 const RN_PASSWORD = process.env.RN_PASSWORD;
 const RN_WSDL = process.env.RN_WSDL;
+const SOAP_WSS_SECURITY = new soap.WSSecurity(RN_USER, RN_PASSWORD, {hasTimeStamp: false,hasTokenCreated : false});
 const APP_API_ID = 'KF Operations';
 const APP_IP_ADDRESS = '10.0.0.0';
 
