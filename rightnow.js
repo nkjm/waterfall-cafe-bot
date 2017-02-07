@@ -65,9 +65,19 @@ module.exports = class RightNow {
                             }
 
                             // Get full content using content id.
-                            let content_template = new client.AnswerContent();
-                            content_template.ID = {
-                                id: content_id
+                            let content_template = {
+                                ID: {
+                                    attributes: {
+                                        id: content_id
+                                    }
+                                },
+                                SecurityOptions: null,
+                                AccessLevels: null,
+                                Categories: null,
+                                CommonAttachments: null,
+                                CommonFields: null,
+                                FileAttachments: null,
+                                Products: null
                             }
                             console.log(content_template);
                             client.GetContent({
