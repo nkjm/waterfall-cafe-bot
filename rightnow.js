@@ -31,6 +31,7 @@ module.exports = class RightNow {
                 );
 
                 let options = {};
+                let session_token;
                 client.StartInteraction({
                     AppIdentifier: APP_API_ID,
                     UserIPAddress: APP_IP_ADDRESS
@@ -40,10 +41,10 @@ module.exports = class RightNow {
                         return reject("Failed to start interaction.");
                     }
                     console.log("Interaction started.");
-
+                    session_token = result.SessionToken;
                     console.log("Going to search '" + question + "'");
                     client.GetSmartAssistantSearch({
-                        SessionToken: result.SessionToken,
+                        SessionToken: session_token,
                         Body: question,
                         Subject: question,
                         Limit: 5
@@ -54,16 +55,28 @@ module.exports = class RightNow {
                         }
 
                         if (result.ContentListResponse.SummaryContents && result.ContentListResponse.SummaryContents.SummaryContentList){
+                            let content_id;
                             if(result.ContentListResponse.SummaryContents.SummaryContentList.length > 0){
-                                for (var i = 0; i < result.ContentListResponse.SummaryContents.SummaryContentList.length; i ++) {
-                                    console.log(result.ContentListResponse.SummaryContents.SummaryContentList[i]);
-                                    console.log(result.ContentListResponse.SummaryContents.SummaryContentList[i].ContentOrigin);
-                                }
-                                return resolve(result.ContentListResponse.SummaryContents.SummaryContentList[0]);
+                                content_id = result.ContentListResponse.SummaryContents.SummaryContentList[0].ID.attributes.id;
                             } else {
-                                console.log(result.ContentListResponse.SummaryContents.SummaryContentList);
-                                return resolve(result.ContentListResponse.SummaryContents.SummaryContentList);
+                                content_id = result.ContentListResponse.SummaryContents.SummaryContentList.ID.attributes.id;
                             }
+
+                            // Get full content using content id.
+                            let content_template = {
+                                ID: content_id
+                            }
+                            client.GetContent({
+                                SessionToken: session_token,
+                                ContentTemplate: content_template
+                            }, function(err, result){
+                                if (err){
+                                    console.log("Failed to GetContent.");
+                                    return reject(err);
+                                }
+                                console.log(result);
+                                return resolve(result);
+                            });
                         } else {
                             return resolve("No Content found.");
                         }
