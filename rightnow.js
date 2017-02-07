@@ -66,7 +66,11 @@ module.exports = class RightNow {
 
                             // Get full content using content id.
                             let content_template = {
-                                ID: content_id
+                                ID: {
+                                    attributes: {
+                                        id: content_id
+                                    }
+                                }
                             }
                             client.GetContent({
                                 SessionToken: session_token,
