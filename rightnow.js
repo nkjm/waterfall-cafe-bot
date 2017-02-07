@@ -79,10 +79,11 @@ module.exports = class RightNow {
                                 headers: headers,
                                 json: true
                             }, function (error, response, body) {
-                                (error) ? reject(error) : resolve(body);
+                                (error) ? return reject(error) : return resolve(body);
                             });
                         } else {
                             // Contents not found.
+                            console.log("Contents not found.");
                             return resolve();
                         }
                     }, options);
