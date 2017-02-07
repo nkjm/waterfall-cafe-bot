@@ -57,6 +57,7 @@ module.exports = class ActionFaq {
                         text: that._conversation.intent.fulfillment.speech
                     }];
                 } else {
+                    console.log(response);
                     messages = [{
                         type: "text",
                         text: "回答ありました！"

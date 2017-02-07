@@ -2,6 +2,7 @@
 
 let soap = require("soap");
 let memory = require("memory-cache");
+let request = require('request');
 
 const RN_USER = process.env.RN_USER;
 const RN_PASSWORD = process.env.RN_PASSWORD;
@@ -66,36 +67,18 @@ module.exports = class RightNow {
                             }
 
                             // Get full content using content id.
-                            let content_template = {
-                                ID: {
-                                    attributes: {
-                                        id: content_id
-                                    }
-                                },
-                                SecurityOptions: {
-                                    Contact: {ID: null, Name: null},
-                                    Oraganization: null
-                                },
-                                AccessLevels: null,
-                                Categories: null,
-                                CommonAttachments: null,
-                                CommonFields: null,
-                                FileAttachments: null,
-                                Products: null
+                            let url = "https://" + RN_USER + ":" + RN_PASSWORD + "@" + RN_HOSTNAME + "/services/rest/connect/latest/answers/" + content_id;
+                            let headers = {
+                                "Content-Type": "application/json"
                             }
-                            console.log(content_template);
-                            client.GetContent({
-                                SessionToken: session_token,
-                                ContentTemplate: content_template
-                            }, function(err, result){
-                                if (err){
-                                    console.log("Failed to GetContent.");
-                                    //console.log(err);
-                                    //console.log(result);
-                                    return reject(err);
-                                }
-                                console.log(result);
-                                return resolve(result);
+                            console.log("Getting full content of " + content_id + ".");
+                            request({
+                                method: "GET",
+                                url: url,
+                                headers: headers,
+                                json: true
+                            }, function (error, response, body) {
+                                (error) ? reject(error) : resolve(body);
                             });
                         } else {
                             return resolve("No Content found.");
