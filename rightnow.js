@@ -55,6 +55,8 @@ module.exports = class RightNow {
                         }
 
                         if (result.ContentListResponse.SummaryContents && result.ContentListResponse.SummaryContents.SummaryContentList){
+                            console.log("Got contents.");
+
                             let content_id;
                             if(result.ContentListResponse.SummaryContents.SummaryContentList.length > 0){
                                 content_id = result.ContentListResponse.SummaryContents.SummaryContentList[0].ID.attributes.id;
@@ -72,6 +74,8 @@ module.exports = class RightNow {
                             }, function(err, result){
                                 if (err){
                                     console.log("Failed to GetContent.");
+                                    console.log(err);
+                                    console.log(result);
                                     return reject(err);
                                 }
                                 console.log(result);
