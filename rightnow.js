@@ -12,7 +12,10 @@ const SOAP_WSS_SECURITY = new soap.WSSecurity(RN_USER, RN_PASSWORD, {hasTimeStam
 const APP_API_ID = 'KF Operations';
 const APP_IP_ADDRESS = '10.0.0.0';
 
+console.log('hoge');
+
 module.exports = class RightNow {
+    console.log('hogehoge');
     static searchAnswer(question){
         return new Promise(function(resolve, reject){
             soap.createClient(RN_WSDL, function(err, client) {
