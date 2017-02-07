@@ -67,11 +67,10 @@ module.exports = class RightNow {
                             // Get full content using content id.
                             let content_template = {
                                 ID: {
-                                    attributes: {
-                                        id: content_id
-                                    }
+                                    id: content_id
                                 }
                             }
+                            console.log(content_template);
                             client.GetContent({
                                 SessionToken: session_token,
                                 ContentTemplate: content_template
