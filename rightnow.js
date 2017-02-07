@@ -40,7 +40,6 @@ module.exports = class RightNow {
                         return reject("Failed to start interaction.");
                     }
                     console.log("Interaction started.");
-                    console.log(result);
 
                     console.log("Going to search '" + question + "'");
                     client.GetSmartAssistantSearch({
@@ -53,7 +52,7 @@ module.exports = class RightNow {
                             console.log("Failed GetSmartAssistantSearch.");
                             return reject(err);
                         }
-                        console.log(result);
+                        console.log(result.ContentListResponse.Status.Status);
 
                         if (result.ContentListResponse.SummaryContents && result.ContentListResponse.SummaryContents.SummaryContentList){
                             if(result.ContentListResponse.SummaryContents.SummaryContentList.length>0){
