@@ -29,7 +29,7 @@ soap.createClient(RN_WSDL, function(err, client) {
         ''          //xmlns URI
     );
     memory.put("rn_soap_client", client);
-}
+});
 
 module.exports = class RightNow {
     static searchAnswer(question){
