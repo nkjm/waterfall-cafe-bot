@@ -58,8 +58,12 @@ module.exports = class RightNow {
                             console.log("Failed SearchContent.");
                             return reject(err);
                         }
-                        console.log(result.ContentListResponse);
+                        console.log(result);
 
+                        if (result.SummaryContents){
+                            console.log(result.SummaryContents);
+                            return resolve(result.SummaryContents);
+                        }
                         if (result.ContentListResponse.SummaryContents && result.ContentListResponse.SummaryContents.SummaryContentList){
                             if(result.ContentListResponse.SummaryContents.SummaryContentList.length>0){
                                 for (var i = 0; i < result.ContentListResponse.SummaryContents.SummaryContentList.length; i ++) {
