@@ -41,8 +41,8 @@ module.exports = class RightNow {
                     } else {
                         client.GetSmartAssistantSearch({
                             SessionToken: result.SessionToken,
-                            Body: quesion,
-                            Subject: quesion,
+                            Body: question,
+                            Subject: question,
                             Limit: 5
                         }, function(err, result){
                             if(!!result.ContentListResponse.SummaryContents&&!!result.ContentListResponse.SummaryContents.SummaryContentList){
