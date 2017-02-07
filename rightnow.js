@@ -70,7 +70,8 @@ module.exports = class RightNow {
                                     attributes: {
                                         id: content_id
                                     }
-                                }
+                                },
+                                SecurityOptinos: null
                             }
                             console.log(content_template);
                             client.GetContent({
