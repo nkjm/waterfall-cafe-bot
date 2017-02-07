@@ -3,6 +3,7 @@
 let Promise = require('bluebird');
 let memory = require('memory-cache');
 let line = require('../line');
+let rightnow = require('../rightnow');
 
 module.exports = class ActionFaq {
 
@@ -47,17 +48,33 @@ module.exports = class ActionFaq {
 
     finish(){
         let that = this;
-        let messages = [{
-            type: "text",
-            text: that._conversation.intent.fulfillment.speech
-        }];
-        let promise = line.replyMessage(that._line_event.replyToken, messages);
+        rightnow.searchAnswer(that._line_event.message.text).then(
+            function(response){
+                let messages;
+                if (!response){
+                    messages = [{
+                        type: "text",
+                        text: that._conversation.intent.fulfillment.speech
+                    }];
+                } else {
+                    messages = [{
+                        type: "text",
+                        text: "回答ありました！"
+                    }];
+                }
+                let promise = line.replyMessage(that._line_event.replyToken, messages);
 
-        // Update memory.
-        that._conversation.is_complete = true;
-        memory.put(that._line_event.source.userId, that._conversation);
+                // Update memory.
+                that._conversation.is_complete = true;
+                memory.put(that._line_event.source.userId, that._conversation);
 
-        return promise;
+                return promise;
+            },
+            function(response){
+                console.log("Failed to get answer from rightnow.");
+                return Promise.reject("Failed to get answer from rightnow.");
+            }
+        );
     }
 
     add_parameter(answer){
