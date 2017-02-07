@@ -60,7 +60,7 @@ module.exports = class RightNow {
                             let content_id;
                             if(result.ContentListResponse.SummaryContents.SummaryContentList.length > 0){
                                 content_id = result.ContentListResponse.SummaryContents.SummaryContentList[0].ID.attributes.id;
-                                console.log(result.ContentListResponse.SummaryContents.SummaryContentList[0];
+                                console.log(result.ContentListResponse.SummaryContents.SummaryContentList[0]);
                             } else {
                                 content_id = result.ContentListResponse.SummaryContents.SummaryContentList.ID.attributes.id;
                             }
