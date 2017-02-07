@@ -42,28 +42,18 @@ module.exports = class RightNow {
                     console.log("Interaction started.");
 
                     console.log("Going to search '" + question + "'");
-                    /*
                     client.GetSmartAssistantSearch({
                         SessionToken: result.SessionToken,
                         Body: question,
                         Subject: question,
                         Limit: 5
-                    */
-                    client.SearchContent({
-                        SessionToken: result.SessionToken,
-                        SearchTerms: question,
-                        Limit: 5
                     }, function(err, result){
                         if (err){
-                            console.log("Failed SearchContent.");
+                            console.log("Failed to serach.");
                             return reject(err);
                         }
                         console.log(result);
 
-                        if (result.SummaryContents){
-                            console.log(result.SummaryContents);
-                            return resolve(result.SummaryContents);
-                        }
                         if (result.ContentListResponse.SummaryContents && result.ContentListResponse.SummaryContents.SummaryContentList){
                             if(result.ContentListResponse.SummaryContents.SummaryContentList.length>0){
                                 for (var i = 0; i < result.ContentListResponse.SummaryContents.SummaryContentList.length; i ++) {
