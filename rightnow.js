@@ -82,7 +82,8 @@ module.exports = class RightNow {
                                 (error) ? reject(error) : resolve(body);
                             });
                         } else {
-                            return resolve("No Content found.");
+                            // Contents not found.
+                            return resolve();
                         }
                     }, options);
                 },

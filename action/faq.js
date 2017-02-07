@@ -52,7 +52,7 @@ module.exports = class ActionFaq {
         return rightnow.searchAnswer(that._line_event.message.text).then(
             function(response){
                 let messages;
-                if (!response){
+                if (!response || !response.solution){
                     messages = [{
                         type: "text",
                         text: that._conversation.intent.fulfillment.speech
