@@ -45,6 +45,12 @@ module.exports = class RightNow {
                             Subject: question,
                             Limit: 5
                         }, function(err, result){
+                            if (err){
+                                console.log("Failed GetSmartAssistantSearch.");
+                                console.log(result);
+                                return reject(err);
+                            }
+                            console.log(result);
                             if (result.ContentListResponse.SummaryContents && result.ContentListResponse.SummaryContents.SummaryContentList){
                                 if(result.ContentListResponse.SummaryContents.SummaryContentList.length>0){
                                     for (var i = 0; i < result.ContentListResponse.SummaryContents.SummaryContentList.length; i ++) {
