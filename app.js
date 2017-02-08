@@ -1,24 +1,20 @@
 'use strict';
 
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-
-var route_webhook = require('./routes/webhook');
-
-var app = express();
-
-// view engine setup
 /*
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+** Import Packages
 */
+let express = require('express');
+let path = require('path');
+let favicon = require('serve-favicon');
+let logger = require('morgan');
+let cookieParser = require('cookie-parser');
+let bodyParser = require('body-parser');
+let route_webhook = require('./routes/webhook');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+/*
+** Middleware Configuration
+*/
+let app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json({
     verify: function(req, res, buf, encoding) {
@@ -26,8 +22,10 @@ app.use(bodyParser.json({
     }
 }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
+/*
+** Router Configuration
+*/
 app.use('/webhook', route_webhook);
 
 module.exports = app;
