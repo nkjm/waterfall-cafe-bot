@@ -187,7 +187,11 @@ router.post('/', function(req, res, next) {
                         **
                         ** This is almost new conversation but user may be still conscious of some parameters.
                         ** So we keep existing parameters while changeing the intent.
+                        ** While the name of the flow is "CHANGE Intent", there is a possiblity that intent is same as previous event.
                         */
+                        console.log("This is Change Intent Flow.");
+
+                        // Set new intent while keeping other data.
                         conversation.intent = response.result;
 
                         /*
@@ -219,6 +223,7 @@ router.post('/', function(req, res, next) {
                         ** But it's very hard to identify which parameter user wants to change.
                         ** For now, we do not support change parameter and just perform default action.
                         */
+                        console.log("This may be Change Intent Flow. But for now, we handle this as Start Conversation Flow.");
                         // Instantiate the conversation object. This will be saved as Bot Memory.
                         let conversation = {
                             intent: response.result,
