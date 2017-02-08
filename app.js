@@ -9,7 +9,7 @@ let favicon = require('serve-favicon');
 let logger = require('morgan');
 let cookieParser = require('cookie-parser');
 let bodyParser = require('body-parser');
-let route_webhook = require('./routes/webhook2');
+let route_webhook = require('./routes/webhook');
 
 /*
 ** Middleware Configuration
