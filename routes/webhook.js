@@ -177,6 +177,11 @@ router.post('/', function(req, res, next) {
             );
         } else {
             console.log("Flow is Change Parameter or Change Intent.");
+            if (line_event.type != "message"){
+                console.log("Not supported event type in this flow.");
+                return;
+            }
+
             flow.identify_intent(line_event.source.userId, line_event.message.text).then(
                 function(response){
                     console.log("Intent is " + response.result.action);
