@@ -8,6 +8,7 @@ const plate_mapping = {
     pasta: "パスタ",
     p600: "Plate 600"
 }
+const memory_retention = process.env.MEMORY_RETENTION;
 
 let Promise = require('bluebird');
 let memory = require('memory-cache');
@@ -77,7 +78,7 @@ module.exports = class ActionShowMenu {
 
         // Update the memory.
         this._conversation.confirming = Object.keys(this._conversation.to_confirm)[0];
-        memory.put(this._line_event.source.userId, this._conversation);
+        memory.put(this._line_event.source.userId, this._conversation, memory_retention);
 
         return line.replyMessage(this._line_event.replyToken, messages);
     }
@@ -117,7 +118,7 @@ module.exports = class ActionShowMenu {
 
                 // Update memory.
                 that._conversation.is_complete = true;
-                memory.put(that._line_event.source.userId, that._conversation);
+                memory.put(that._line_event.source.userId, that._conversation, memory_retention);
 
                 return promise;
             },
@@ -161,7 +162,7 @@ module.exports = class ActionShowMenu {
         }
 
         // Update memory.
-        memory.put(this._line_event.source.userId, this._conversation);
+        memory.put(this._line_event.source.userId, this._conversation, memory_retention);
 
         console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
     }

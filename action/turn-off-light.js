@@ -1,5 +1,7 @@
 'use strict';
 
+const memory_retention = process.env.MEMORY_RETENTION;
+
 let Promise = require('bluebird');
 let memory = require('memory-cache');
 let line = require('../line');
@@ -48,7 +50,7 @@ module.exports = class ActionTurnOffLight {
 
                 // Update memory.
                 that._conversation.is_complete = true;
-                memory.put(that._line_event.source.userId, that._conversation);
+                memory.put(that._line_event.source.userId, that._conversation, memory_retention);
 
                 return promise;
             },

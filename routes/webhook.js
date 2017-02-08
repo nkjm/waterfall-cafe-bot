@@ -1,7 +1,13 @@
-'use strict'
+'use strict';
 
+/*
+** Constants
+*/
 const APIAI_CLIENT_ACCESS_TOKEN = process.env.APIAI_CLIENT_ACCESS_TOKEN;
 
+/*
+** Import Packages
+*/
 let express = require('express');
 let router = express.Router();
 let Promise = require('bluebird');
@@ -16,10 +22,14 @@ let action_turn_off_light = require('../action/turn-off-light');
 let action_change_light_color = require('../action/change-light-color');
 let action_faq = require('../action/faq');
 
+/*
+** Middleware Configuration
+*/
 Promise.config({
     // Enable cancellation
     cancellation: true
 });
+
 
 router.post('/', function(req, res, next) {
     res.status(200).end();
@@ -33,18 +43,26 @@ router.post('/', function(req, res, next) {
 
     let line_event = req.body.events[0];
 
-    /*
-     * Recall the memory with this user.
-     */
+    // Check memory and judge if this event is related to the existing conversation.
     let conversation = memory.get(line_event.source.userId);
     if (conversation && !conversation.is_complete){
-        console.log("Found incomplete conversation.");
 
-        // If this event is not supported, we just skip.
+        /*
+        ** It seems this event is related to the existing conversation.
+        */
+        console.log("Found previous conversation.");
+
+        /*
+        ** Supported event type is "message" and "postback". Otherwise, the event is ignored.
+        */
         if (line_event.type != "message" && line_event.type != "postback"){
             return;
         }
 
+        /*
+        ** Instantiate action depending on the intent.
+        ** The implementations of each action are located under /action directory.
+        */
         let action;
         switch(conversation.intent.action){
             case "play-music":
@@ -70,7 +88,10 @@ router.post('/', function(req, res, next) {
                 break;
         }
 
-        // Add parameter if there is confirming parameter.
+        /*
+        ** If there is a parameter under confirming, we assume this event is the reply to fill out that parameter.
+        ** So we save the message text or data as the value of the parameter.
+        */
         if (conversation.confirming){
             if (line_event.type == "message"){
                 let parameter = {};
@@ -83,6 +104,10 @@ router.post('/', function(req, res, next) {
             }
         }
 
+        /*
+        ** Run the intent oriented action.
+        ** This may lead collection of another parameter or final action for this intent.
+        */
         action.run().then(
             function(response){
                 console.log("End of webhook process.");
@@ -100,14 +125,20 @@ router.post('/', function(req, res, next) {
 
 
     /*
-     * It seems this conversation is about new intent. So we try to identify user's intent.
-     */
+    ** It seems this is a BRAND NEW CONVERSATION.
+    ** To beigin with, we will try to identify user's intent.
+    ** If some parameters are set, we save them.
+    ** And then we run the process depending on each intents.
+    */
 
-     // If this event is not supported, we just skip.
+    // "message" is the only supported event on starting conversation.
     if (line_event.type != "message"){
         return;
     }
 
+    /*
+    ** We try to identify user's intent.
+    */
     console.log("Brand new conversation.");
     let aiInstance = apiai(APIAI_CLIENT_ACCESS_TOKEN);
     let aiRequest = aiInstance.textRequest(line_event.message.text, {sessionId: line_event.source.userId});
@@ -122,7 +153,7 @@ router.post('/', function(req, res, next) {
         function(response){
             console.log("Intent is " + response.result.action);
 
-            // Initiate the conversation object.
+            // Instantiate the conversation object. This will be saved as Bot Memory.
             let conversation = {
                 intent: response.result,
                 confirmed: {},
@@ -131,6 +162,10 @@ router.post('/', function(req, res, next) {
                 is_complete: false
             }
 
+            /*
+            ** Instantiate action depending on the intent.
+            ** The implementations of each action are located under /action directory.
+            */
             let action;
             switch (conversation.intent.action) {
                 case "show-menu":
@@ -156,7 +191,9 @@ router.post('/', function(req, res, next) {
                     break;
             }
 
-            // If api.ai return some parameters. we add them to parameter.
+            /*
+            ** If api.ai return some parameters. we save them in conversation object so that Bot can remember.
+            */
             if (conversation.intent.parameters && Object.keys(conversation.intent.parameters).length > 0){
                 for (let param_key of Object.keys(conversation.intent.parameters)){
                     let parameter = {};
@@ -165,6 +202,10 @@ router.post('/', function(req, res, next) {
                 }
             }
 
+            /*
+            ** Run the intent oriented action.
+            ** This may lead collection of another parameter or final action for this intent.
+            */
             return action.run();
         },
         function(response){
