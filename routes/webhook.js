@@ -265,6 +265,7 @@ router.post('/', function(req, res, next) {
                                 parameter[conversation.previous.confirmed] = line_event.postback.data;
                             }
                             if (parameter !== {}){
+                                action = flow.instantiate_action(conversation, line_event);
                                 parameter = action.parse_parameter(parameter);
                                 if (parameter){
                                     /* ########################################
