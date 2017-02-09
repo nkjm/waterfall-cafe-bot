@@ -61,26 +61,28 @@ module.exports = class ActionShowMenu {
         console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
     }
 
-    is_parameter_sufficient(){
-        if (Object.keys(this._conversation.to_confirm).length > 0){
-            return false;
+    parse_parameter(answer){
+        let answer_key = Object.keys(answer)[0];
+        let answer_value = answer[Object.keys(answer)[0]];
+        let parameter = {};
+
+        // Manipulate the answer for date if required.
+        if (answer_key == "date"){
+            if (answer_value === null || answer_value == ""){
+                return false;
+            }
+            if (answer_value.match(/昨日/)){
+                answer_value = yyyymmdd.yesterday();
+            } else if (answer_value.match(/今日/)){
+                answer_value = yyyymmdd.today();
+            } else if (answer_value.match(/明日/)){
+                answer_value = yyyymmdd.tomorrow();
+            } else {
+                console.log("Assume value is yyyy-mm-dd");
+            }
         }
-        return true;
-    }
-
-    collect(){
-        if (Object.keys(this._conversation.to_confirm).length == 0){
-            console.log("While collect() is called, there is no parameter to confirm.");
-            Promise.reject();
-            return;
-        }
-        let messages = [this._conversation.to_confirm[Object.keys(this._conversation.to_confirm)[0]].message_to_confirm];
-
-        // Update the memory.
-        this._conversation.confirming = Object.keys(this._conversation.to_confirm)[0];
-        memory.put(this._line_event.source.userId, this._conversation, memory_retention);
-
-        return line.replyMessage(this._line_event.replyToken, messages);
+        parameter[answer_key] = answer_value;
+        return parameter;
     }
 
     finish(){
@@ -126,36 +128,5 @@ module.exports = class ActionShowMenu {
                 return Promise.reject("Failed to get today's menu.");
             }
         );
-    }
-
-    parse_parameter(answer){
-        let answer_key = Object.keys(answer)[0];
-        let answer_value = answer[Object.keys(answer)[0]];
-        let parameter = {};
-
-        // Manipulate the answer for date if required.
-        if (answer_key == "date"){
-            if (answer_value === null || answer_value == ""){
-                return false;
-            }
-            if (answer_value.match(/昨日/)){
-                answer_value = yyyymmdd.yesterday();
-            } else if (answer_value.match(/今日/)){
-                answer_value = yyyymmdd.today();
-            } else if (answer_value.match(/明日/)){
-                answer_value = yyyymmdd.tomorrow();
-            } else {
-                console.log("Assume value is yyyy-mm-dd");
-            }
-        }
-        parameter[answer_key] = answer_value;
-        return parameter;
-    }
-
-    run(){
-        if (this.is_parameter_sufficient()){
-            return this.finish();
-        }
-        return this.collect();
     }
 };

@@ -6,6 +6,7 @@ const APIAI_CLIENT_ACCESS_TOKEN = process.env.APIAI_CLIENT_ACCESS_TOKEN;
 let Promise = require('bluebird');
 let memory = require('memory-cache');
 let apiai = require('apiai');
+let line = require('./line');
 let action_play_music = require('./action/play-music');
 let action_show_menu = require('./action/show-menu');
 let action_show_calorie = require('./action/show-calorie');
@@ -75,5 +76,33 @@ module.exports = class Flow {
         }
 
         console.log("We have " + Object.keys(conversation.to_confirm).length + " parameters to confirm.");
+    }
+
+    static is_parameter_sufficient(conversation){
+        if (Object.keys(conversation.to_confirm).length > 0){
+            return false;
+        }
+        return true;
+    }
+
+    static collect(conversation, reply_token){
+        if (Object.keys(conversation.to_confirm).length == 0){
+            console.log("While collect() is called, there is no parameter to confirm.");
+            return Promise.reject();
+        }
+        let messages = [conversation.to_confirm[Object.keys(conversation.to_confirm)[0]].message_to_confirm];
+
+        // Set confirming.
+        conversation.confirming = Object.keys(conversation.to_confirm)[0];
+
+        // Send question to the user.
+        return line.replyMessage(reply_token, messages);
+    }
+
+    static run(action){
+        if (Object.keys(action._conversation.to_confirm).length > 0){
+            return Flow.collect(action._conversation, action._line_event.replyToken);
+        }
+        return action.finish();
     }
 };

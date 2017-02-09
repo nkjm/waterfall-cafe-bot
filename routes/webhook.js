@@ -53,9 +53,9 @@ router.post('/', function(req, res, next) {
     let conversation = memory.get(line_event.source.userId);
 
     if (!conversation){
-        /*
+        /* ##########################################
         ** ### This is "Start Conversation" Flow. ###
-        **
+        ** ##########################################
         ** It seems this is a BRAND NEW CONVERSATION.
         ** To beigin with, we will try to identify user's intent.
         ** If some parameters are set, we save them.
@@ -68,6 +68,9 @@ router.post('/', function(req, res, next) {
             console.log("Not supported event type in this flow.");
             return;
         }
+
+        // Will be instantiated later on.
+        let action;
 
         // Indentify Intent.
         flow.identify_intent(line_event.source.userId, line_event.message.text).then(
@@ -89,19 +92,19 @@ router.post('/', function(req, res, next) {
                 ** Instantiate action depending on the intent.
                 ** The implementations of each action are located under /action directory.
                 */
-                let action = flow.instantiate_action(conversation, line_event);
+                action = flow.instantiate_action(conversation, line_event);
 
                 /*
                 ** If api.ai return some parameters. we save them in conversation object so that Bot can remember.
                 */
-                if (conversation.intent.parameters && Object.keys(conversation.intent.parameters).length > 0){
-                    for (let param_key of Object.keys(conversation.intent.parameters)){
+                if (action._conversation.intent.parameters && Object.keys(action._conversation.intent.parameters).length > 0){
+                    for (let param_key of Object.keys(action._conversation.intent.parameters)){
                         let parameter = {};
-                        parameter[param_key] = conversation.intent.parameters[param_key];
+                        parameter[param_key] = action._conversation.intent.parameters[param_key];
                         parameter = action.parse_parameter(parameter);
 
                         if (parameter){
-                            flow.add_parameter(conversation, parameter);
+                            flow.add_parameter(action._conversation, parameter);
                         }
                     }
                 }
@@ -110,7 +113,7 @@ router.post('/', function(req, res, next) {
                 ** Run the intent oriented action.
                 ** This may lead collection of another parameter or final action for this intent.
                 */
-                return action.run();
+                return flow.run(action);
             },
             function(response){
                 console.log("Failed to indentify intent.");
@@ -119,13 +122,15 @@ router.post('/', function(req, res, next) {
         ).then(
             function(response){
                 console.log("End of webhook process.");
+                console.log(action._conversation);
 
                 // Update memory.
-                memory.put(line_event.source.userId, conversation, memory_retention);
+                memory.put(line_event.source.userId, action._conversation, memory_retention);
             },
             function(response){
                 console.log("Failed to process event.");
                 console.log(response);
+                console.log(action._conversation);
 
                 // Clear memory.
                 memory.put(line_event.source.userId, null);
@@ -133,9 +138,9 @@ router.post('/', function(req, res, next) {
         );
     } else {
         if (conversation.confirming){
-            /*
+            /* #############################
             ** ### This is "Reply" Flow. ###
-            **
+            ** #############################
             ** It seems this event is related to the existing conversation.
             ** We assume this event is the reply to fill out the parameter.
             */
@@ -179,6 +184,9 @@ router.post('/', function(req, res, next) {
             action.run().then(
                 function(response){
                     console.log("End of webhook process.");
+
+                    // Update memory.
+                    memory.put(line_event.source.userId, conversation, memory_retention);
                 },
                 function(response){
                     console.log("Failed to process the event.");
@@ -204,9 +212,9 @@ router.post('/', function(req, res, next) {
                     console.log("Intent is " + response.result.action);
 
                     if (response.result.action != "input.unknown"){
-                        /*
-                        ** This is "Change Intent" Flow.
-                        **
+                        /* #####################################
+                        ** ### This is "Change Intent" Flow. ###
+                        ** #####################################
                         ** This is almost new conversation but user may be still conscious of some parameters.
                         ** So we keep existing parameters while changeing the intent.
                         ** While the name of the flow is "CHANGE Intent", there is a possiblity that intent is same as previous event.
@@ -243,13 +251,13 @@ router.post('/', function(req, res, next) {
                         */
                         return action.run();
                     } else {
-                        /*
-                        ** This may be "Change Parameter" Flow.
-                        **
+                        /* ############################################
+                        ** ### This may be "Change Parameter" Flow. ###
+                        ** ############################################
                         ** But it's very hard to identify which parameter user wants to change.
                         ** For now, we do not support change parameter and just perform default action.
                         */
-                        console.log("This may be Change Intent Flow. But for now, we handle this as Start Conversation Flow.");
+                        console.log("This may be Change Parameter Flow. But for now, we handle this as Start Conversation Flow.");
                         // Instantiate the conversation object. This will be saved as Bot Memory.
                         let conversation = {
                             intent: response.result,
@@ -293,6 +301,9 @@ router.post('/', function(req, res, next) {
             ).then(
                 function(response){
                     console.log("End of webhook process.");
+
+                    // Update memory.
+                    memory.put(line_event.source.userId, conversation, memory_retention);
                 },
                 function(response){
                     console.log("Failed to process event.");
