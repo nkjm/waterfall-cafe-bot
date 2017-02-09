@@ -268,7 +268,10 @@ router.post('/', function(req, res, next) {
                             intent: response.result,
                             confirmed: {},
                             to_confirm: {},
-                            confirming: null
+                            confirming: null,
+                            previous: {
+                                confirmed: null
+                            }
                         }
 
                         /*
