@@ -80,7 +80,7 @@ router.post('/', function(req, res, next) {
                     confirmed: {},
                     to_confirm: {},
                     confirming: null,
-                    pervious: {
+                    previous: {
                         confirmed: null
                     }
                 }
