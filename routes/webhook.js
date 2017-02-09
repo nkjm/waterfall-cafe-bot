@@ -209,6 +209,9 @@ router.post('/', function(req, res, next) {
                 return;
             }
 
+            // Will be instantiated later on.
+            let action;
+
             flow.identify_intent(line_event.source.userId, line_event.message.text).then(
                 function(response){
                     console.log("Intent is " + response.result.action);
@@ -230,7 +233,7 @@ router.post('/', function(req, res, next) {
                         ** Instantiate action depending on the intent.
                         ** The implementations of each action are located under /action directory.
                         */
-                        let action = flow.instantiate_action(conversation, line_event);
+                        action = flow.instantiate_action(conversation, line_event);
 
                         /*
                         ** If api.ai return some parameters. we save them in conversation object so that Bot can remember.
@@ -261,7 +264,7 @@ router.post('/', function(req, res, next) {
                         */
                         console.log("This may be Change Parameter Flow. But for now, we handle this as Start Conversation Flow.");
                         // Instantiate the conversation object. This will be saved as Bot Memory.
-                        let conversation = {
+                        conversation = {
                             intent: response.result,
                             confirmed: {},
                             to_confirm: {},
@@ -272,7 +275,7 @@ router.post('/', function(req, res, next) {
                         ** Instantiate action depending on the intent.
                         ** The implementations of each action are located under /action directory.
                         */
-                        let action = flow.instantiate_action(conversation, line_event);
+                        action = flow.instantiate_action(conversation, line_event);
 
                         /*
                         ** If api.ai return some parameters. we save them in conversation object so that Bot can remember.
