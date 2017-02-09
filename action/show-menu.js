@@ -80,6 +80,9 @@ module.exports = class ActionShowMenu {
             } else {
                 console.log("Assume value is yyyy-mm-dd");
             }
+        } else {
+            // This is unnecessary parameter so ignore this.
+            return false;
         }
         parameter[answer_key] = answer_value;
         return parameter;
@@ -116,13 +119,7 @@ module.exports = class ActionShowMenu {
                     }
                 }
 
-                let promise = line.replyMessage(that._line_event.replyToken, messages);
-
-                // Update memory.
-                that._conversation.is_complete = true;
-                memory.put(that._line_event.source.userId, that._conversation, memory_retention);
-
-                return promise;
+                return line.replyMessage(that._line_event.replyToken, messages);
             },
             function(response){
                 return Promise.reject("Failed to get today's menu.");

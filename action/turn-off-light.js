@@ -27,14 +27,7 @@ module.exports = class ActionTurnOffLight {
         console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
     }
 
-    is_parameter_sufficient(){
-        if (Object.keys(this._conversation.to_confirm).length > 0){
-            return false;
-        }
-        return true;
-    }
-
-    collect(){
+    parse_parameter(answer){
     }
 
     finish(){
@@ -46,27 +39,11 @@ module.exports = class ActionTurnOffLight {
                     text: "了解しましたー。"
                 }];
 
-                let promise = line.replyMessage(that._line_event.replyToken, messages);
-
-                // Update memory.
-                that._conversation.is_complete = true;
-                memory.put(that._line_event.source.userId, that._conversation, memory_retention);
-
-                return promise;
+                return line.replyMessage(that._line_event.replyToken, messages);
             },
             function(response){
                 return Promise.reject("Failed to turn on light.");
             }
         );
-    }
-
-    parse_parameter(answer){
-    }
-
-    run(){
-        if (this.is_parameter_sufficient()){
-            return this.finish();
-        }
-        return this.collect();
     }
 };

@@ -25,26 +25,7 @@ module.exports = class ActionFaq {
         console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
     }
 
-    is_parameter_sufficient(){
-        if (Object.keys(this._conversation.to_confirm).length > 0){
-            return false;
-        }
-        return true;
-    }
-
-    collect(){
-        if (Object.keys(this._conversation.to_confirm).length == 0){
-            console.log("While collect() is called, there is no parameter to confirm.");
-            Promise.reject();
-            return;
-        }
-        let messages = [this._conversation.to_confirm[Object.keys(this._conversation.to_confirm)[0]].message_to_confirm];
-
-        // Update the memory.
-        this._conversation.confirming = Object.keys(this._conversation.to_confirm)[0];
-        memory.put(this._line_event.source.userId, this._conversation);
-
-        return line.replyMessage(this._line_event.replyToken, messages);
+    parse_parameter(answer){
     }
 
     finish(){
@@ -63,29 +44,13 @@ module.exports = class ActionFaq {
                         text: striptags(response.solution)
                     }];
                 }
-                let promise = line.replyMessage(that._line_event.replyToken, messages);
-
-                // Update memory.
-                that._conversation.is_complete = true;
-                memory.put(that._line_event.source.userId, that._conversation);
-
-                return promise;
+                
+                return line.replyMessage(that._line_event.replyToken, messages);
             },
             function(response){
                 console.log("Failed to get answer from rightnow.");
                 return Promise.reject("Failed to get answer from rightnow.");
             }
         );
-    }
-
-    parse_parameter(answer){
-
-    }
-
-    run(){
-        if (this.is_parameter_sufficient()){
-            return this.finish();
-        }
-        return this.collect();
     }
 };

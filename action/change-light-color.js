@@ -98,51 +98,6 @@ module.exports = class ActionChangeLightColor {
         console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
     }
 
-    is_parameter_sufficient(){
-        if (Object.keys(this._conversation.to_confirm).length > 0){
-            return false;
-        }
-        return true;
-    }
-
-    collect(){
-        if (Object.keys(this._conversation.to_confirm).length == 0){
-            console.log("While collect() is called, there is no parameter to confirm.");
-            Promise.reject();
-            return;
-        }
-        let messages = [this._conversation.to_confirm[Object.keys(this._conversation.to_confirm)[0]].message_to_confirm];
-
-        // Update the memory.
-        this._conversation.confirming = Object.keys(this._conversation.to_confirm)[0];
-        memory.put(this._line_event.source.userId, this._conversation, memory_retention);
-
-        return line.replyMessage(this._line_event.replyToken, messages);
-    }
-
-    finish(){
-        let that = this;
-        return hue.change_color(that._conversation.confirmed.color).then(
-            function(response){
-                let messages = [{
-                    type: "text",
-                    text: "了解しましたー。"
-                }];
-
-                let promise = line.replyMessage(that._line_event.replyToken, messages);
-
-                // Update memory.
-                that._conversation.is_complete = true;
-                memory.put(that._line_event.source.userId, that._conversation, memory_retention);
-
-                return promise;
-            },
-            function(response){
-                return Promise.reject("Failed to turn on light.");
-            }
-        );
-    }
-
     parse_parameter(answer){
         let answer_key = Object.keys(answer)[0];
         let answer_value = answer[Object.keys(answer)[0]];
@@ -168,14 +123,27 @@ module.exports = class ActionChangeLightColor {
                 this._conversation.to_confirm[answer_key].message_to_confirm.text = "色が特定できませんでした。もう一度、端的に色だけ教えてもらえませんか？";
                 return false;
             }
+        } else {
+            // This is unnecessary parameter so ignore this.
+            return false;
         }
         return parameter;
     }
 
-    run(){
-        if (this.is_parameter_sufficient()){
-            return this.finish();
-        }
-        return this.collect();
+    finish(){
+        let that = this;
+        return hue.change_color(that._conversation.confirmed.color).then(
+            function(response){
+                let messages = [{
+                    type: "text",
+                    text: "了解しましたー。"
+                }];
+
+                return line.replyMessage(that._line_event.replyToken, messages);
+            },
+            function(response){
+                return Promise.reject("Failed to turn on light.");
+            }
+        );
     }
 };

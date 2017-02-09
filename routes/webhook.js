@@ -125,7 +125,7 @@ router.post('/', function(req, res, next) {
                 console.log(action._conversation);
 
                 // Update memory.
-                memory.put(line_event.source.userId, action._conversation, memory_retention);
+                memory.put(action._line_event.source.userId, action._conversation, memory_retention);
             },
             function(response){
                 console.log("Failed to process event.");
@@ -164,16 +164,16 @@ router.post('/', function(req, res, next) {
             ** We save the message text or data as the value of the parameter.
             */
             let parameter = {};
-            if (line_event.type == "message"){
-                parameter[conversation.confirming] = line_event.message.text;
-            } else if (line_event.type == "postback"){
-                parameter[conversation.confirming] = line_event.postback.data;
+            if (action._line_event.type == "message"){
+                parameter[action._conversation.confirming] = action._line_event.message.text;
+            } else if (action._line_event.type == "postback"){
+                parameter[action._conversation.confirming] = action._line_event.postback.data;
             }
             if (parameter !== {}){
                 parameter = action.parse_parameter(parameter);
 
                 if (parameter){
-                    flow.add_parameter(conversation, parameter);
+                    flow.add_parameter(action._conversation, parameter);
                 }
             }
 
@@ -181,19 +181,21 @@ router.post('/', function(req, res, next) {
             ** Run the intent oriented action.
             ** This may lead collection of another parameter or final action for this intent.
             */
-            action.run().then(
+            flow.run(action).then(
                 function(response){
                     console.log("End of webhook process.");
+                    console.log(action._conversation);
 
                     // Update memory.
-                    memory.put(line_event.source.userId, conversation, memory_retention);
+                    memory.put(action._line_event.source.userId, action._conversation, memory_retention);
                 },
                 function(response){
                     console.log("Failed to process the event.");
                     console.log(response);
+                    console.log(action._conversation);
 
                     // Clear memory.
-                    memory.put(line_event.source.userId, null);
+                    memory.put(action._line_event.source.userId, null);
                 }
             );
         } else {
@@ -233,14 +235,14 @@ router.post('/', function(req, res, next) {
                         /*
                         ** If api.ai return some parameters. we save them in conversation object so that Bot can remember.
                         */
-                        if (conversation.intent.parameters && Object.keys(conversation.intent.parameters).length > 0){
-                            for (let param_key of Object.keys(conversation.intent.parameters)){
+                        if (action._conversation.intent.parameters && Object.keys(action._conversation.intent.parameters).length > 0){
+                            for (let param_key of Object.keys(action._conversation.intent.parameters)){
                                 let parameter = {};
-                                parameter[param_key] = conversation.intent.parameters[param_key];
+                                parameter[param_key] = action._conversation.intent.parameters[param_key];
                                 parameter = action.parse_parameter(parameter);
 
                                 if (parameter){
-                                    flow.add_parameter(conversation, parameter);
+                                    flow.add_parameter(action._conversation, parameter);
                                 }
                             }
                         }
@@ -249,7 +251,7 @@ router.post('/', function(req, res, next) {
                         ** Run the intent oriented action.
                         ** This may lead collection of another parameter or final action for this intent.
                         */
-                        return action.run();
+                        return flow.run(action);
                     } else {
                         /* ############################################
                         ** ### This may be "Change Parameter" Flow. ###
@@ -275,14 +277,14 @@ router.post('/', function(req, res, next) {
                         /*
                         ** If api.ai return some parameters. we save them in conversation object so that Bot can remember.
                         */
-                        if (conversation.intent.parameters && Object.keys(conversation.intent.parameters).length > 0){
-                            for (let param_key of Object.keys(conversation.intent.parameters)){
+                        if (action._conversation.intent.parameters && Object.keys(action._conversation.intent.parameters).length > 0){
+                            for (let param_key of Object.keys(action._conversation.intent.parameters)){
                                 let parameter = {};
-                                parameter[param_key] = conversation.intent.parameters[param_key];
+                                parameter[param_key] = action._conversation.intent.parameters[param_key];
                                 parameter = action.parse_parameter(parameter);
 
                                 if (parameter){
-                                    flow.add_parameter(conversation, parameter);
+                                    flow.add_parameter(action._conversation, parameter);
                                 }
                             }
                         }
@@ -291,7 +293,7 @@ router.post('/', function(req, res, next) {
                         ** Run the intent oriented action.
                         ** This may lead collection of another parameter or final action for this intent.
                         */
-                        return action.run();
+                        return flow.run(action);
                     }
                 },
                 function(response){
@@ -301,6 +303,7 @@ router.post('/', function(req, res, next) {
             ).then(
                 function(response){
                     console.log("End of webhook process.");
+                    console.log(action._conversation);
 
                     // Update memory.
                     memory.put(line_event.source.userId, conversation, memory_retention);
@@ -308,6 +311,7 @@ router.post('/', function(req, res, next) {
                 function(response){
                     console.log("Failed to process event.");
                     console.log(response);
+                    console.log(action._conversation);
 
                     // Clear memory.
                     memory.put(line_event.source.userId, null);
