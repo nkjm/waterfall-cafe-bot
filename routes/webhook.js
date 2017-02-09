@@ -256,13 +256,39 @@ router.post('/', function(req, res, next) {
                         */
                         return flow.run(action);
                     } else {
-                        /* ############################################
-                        ** ### This may be "Change Parameter" Flow. ###
-                        ** ############################################
-                        ** But it's very hard to identify which parameter user wants to change.
-                        ** For now, we do not support change parameter and just perform default action.
+                        // Check if this is Change Parameter Flow.
+                        if (conversation.previous.confirmed){
+                            let parameter = {};
+                            if (line_event.type == "message"){
+                                parameter[conversation.previous.confirmed] = line_event.message.text;
+                            } else if (line_event.type == "postback"){
+                                parameter[conversation.previous.confirmed] = line_event.postback.data;
+                            }
+                            if (parameter !== {}){
+                                parameter = action.parse_parameter(parameter);
+                                if (parameter){
+                                    /* ########################################
+                                    ** ### This is "Change Parameter" Flow. ###
+                                    ** ########################################
+                                    */
+                                    console.log("This is change parameter flow.");
+                                    flow.add_parameter(action._conversation, parameter);
+
+                                    /*
+                                    ** Run the intent oriented action.
+                                    ** This may lead collection of another parameter or final action for this intent.
+                                    */
+                                    return flow.run(action);
+                                }
+                            }
+                        }
+
+                        /* #####################################
+                        ** ### This Start Conversation Flow. ###
+                        ** #####################################
                         */
-                        console.log("This may be Change Parameter Flow. But for now, we handle this as Start Conversation Flow.");
+                        console.log("This is Start Conversation Flow. And the intent is " + response.result.action + ".");
+
                         // Instantiate the conversation object. This will be saved as Bot Memory.
                         conversation = {
                             intent: response.result,
