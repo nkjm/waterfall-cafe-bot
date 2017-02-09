@@ -54,4 +54,26 @@ module.exports = class Flow {
         }
         return action;
     }
+
+    static add_parameter(conversation, parameter){
+        console.log("Adding parameter {" + Object.keys(parameter)[0] + ":'" + parameter[Object.keys(parameter)[0]] + "'}");
+
+        // Add the parameter to "confirmed".
+        Object.assign(conversation.confirmed, parameter);
+
+        // At the same time, save the parameter key as "previously confirmed" thing.
+        conversation.previous.confirmed = Object.keys(parameter)[0];
+
+        // Remove item from to_confirm.
+        if (conversation.to_confirm[Object.keys(parameter)[0]]){
+            delete conversation.to_confirm[Object.keys(parameter)[0]];
+        }
+
+        // Clear confirming.
+        if (conversation.confirming == Object.keys(parameter)[0]){
+            conversation.confirming = null;
+        }
+
+        console.log("We have " + Object.keys(conversation.to_confirm).length + " parameters to confirm.");
+    }
 };

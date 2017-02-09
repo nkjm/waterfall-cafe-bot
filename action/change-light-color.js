@@ -143,16 +143,16 @@ module.exports = class ActionChangeLightColor {
         );
     }
 
-    add_parameter(answer){
+    parse_parameter(answer){
         let answer_key = Object.keys(answer)[0];
         let answer_value = answer[Object.keys(answer)[0]];
-
-        if (answer_value === null || answer_value == ""){
-            return;
-        }
+        let parameter = {};
 
         // Replace color name with color code.
         if (answer_key == "color"){
+            if (answer_value === null || answer_value == ""){
+                return false;
+            }
             let found_color = false;
             for (let color_mapping of color_mappings){
                 if (answer_value.replace("色", "") == color_mapping.label){
@@ -162,29 +162,14 @@ module.exports = class ActionChangeLightColor {
             }
             if (found_color){
                 console.log("Color identified.");
-                answer[Object.keys(answer)[0]] = answer_value;
+                parameter[answer_key] = answer_value;
             } else {
                 console.log("Unable to identify color.");
                 this._conversation.to_confirm[answer_key].message_to_confirm.text = "色が特定できませんでした。もう一度、端的に色だけ教えてもらえませんか？";
-                return;
+                return false;
             }
         }
-
-        console.log("Adding parameter {" + answer_key + ":'" + answer_value + "'}");
-
-        // Add parameter.
-        Object.assign(this._conversation.confirmed, answer);
-
-        // Remove item from to_confirm.
-        delete this._conversation.to_confirm[answer_key];
-        if (this._conversation.confirming == answer_key){
-            this._conversation.confirming = null;
-        }
-
-        // Update memory.
-        memory.put(this._line_event.source.userId, this._conversation, memory_retention);
-
-        console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
+        return parameter;
     }
 
     run(){

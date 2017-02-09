@@ -3,7 +3,7 @@
 /*
 ** Constants
 */
-const MEMORY_RETENTION = 1000 * 60 * 3 // 3分
+const memory_retention = Number(process.env.MEMORY_RETENTION);
 
 /*
 ** Import Packages
@@ -75,12 +75,14 @@ router.post('/', function(req, res, next) {
                 console.log("Intent is " + response.result.action);
 
                 // Instantiate the conversation object. This will be saved as Bot Memory.
-                let conversation = {
+                conversation = {
                     intent: response.result,
                     confirmed: {},
                     to_confirm: {},
                     confirming: null,
-                    is_complete: false
+                    pervious: {
+                        confirmed: null
+                    }
                 }
 
                 /*
@@ -96,7 +98,11 @@ router.post('/', function(req, res, next) {
                     for (let param_key of Object.keys(conversation.intent.parameters)){
                         let parameter = {};
                         parameter[param_key] = conversation.intent.parameters[param_key];
-                        action.add_parameter(parameter);
+                        parameter = action.parse_parameter(parameter);
+
+                        if (parameter){
+                            flow.add_parameter(conversation, parameter);
+                        }
                     }
                 }
 
@@ -113,6 +119,9 @@ router.post('/', function(req, res, next) {
         ).then(
             function(response){
                 console.log("End of webhook process.");
+
+                // Update memory.
+                memory.put(line_event.source.userId, conversation, memory_retention);
             },
             function(response){
                 console.log("Failed to process event.");
@@ -149,14 +158,18 @@ router.post('/', function(req, res, next) {
             /*
             ** We save the message text or data as the value of the parameter.
             */
+            let parameter = {};
             if (line_event.type == "message"){
-                let parameter = {};
                 parameter[conversation.confirming] = line_event.message.text;
-                action.add_parameter(parameter);
             } else if (line_event.type == "postback"){
-                let parameter = {};
                 parameter[conversation.confirming] = line_event.postback.data;
-                action.add_parameter(parameter);
+            }
+            if (parameter !== {}){
+                parameter = action.parse_parameter(parameter);
+
+                if (parameter){
+                    flow.add_parameter(conversation, parameter);
+                }
             }
 
             /*
@@ -177,6 +190,10 @@ router.post('/', function(req, res, next) {
             );
         } else {
             console.log("Flow is Change Parameter or Change Intent.");
+
+            /*
+            ** While postback is considerable in case of Change Parameter Flow, we does not support it at present so only supported event type is message.
+            */
             if (line_event.type != "message"){
                 console.log("Not supported event type in this flow.");
                 return;
@@ -212,7 +229,11 @@ router.post('/', function(req, res, next) {
                             for (let param_key of Object.keys(conversation.intent.parameters)){
                                 let parameter = {};
                                 parameter[param_key] = conversation.intent.parameters[param_key];
-                                action.add_parameter(parameter);
+                                parameter = action.parse_parameter(parameter);
+
+                                if (parameter){
+                                    flow.add_parameter(conversation, parameter);
+                                }
                             }
                         }
 
@@ -234,8 +255,7 @@ router.post('/', function(req, res, next) {
                             intent: response.result,
                             confirmed: {},
                             to_confirm: {},
-                            confirming: null,
-                            is_complete: false
+                            confirming: null
                         }
 
                         /*
@@ -251,7 +271,11 @@ router.post('/', function(req, res, next) {
                             for (let param_key of Object.keys(conversation.intent.parameters)){
                                 let parameter = {};
                                 parameter[param_key] = conversation.intent.parameters[param_key];
-                                action.add_parameter(parameter);
+                                parameter = action.parse_parameter(parameter);
+
+                                if (parameter){
+                                    flow.add_parameter(conversation, parameter);
+                                }
                             }
                         }
 

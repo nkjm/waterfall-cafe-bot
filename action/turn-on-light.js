@@ -60,7 +60,7 @@ module.exports = class ActionTurnOnLight {
         );
     }
 
-    add_parameter(answer){
+    parse_parameter(answer){
     }
 
     run(){

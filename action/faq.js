@@ -78,7 +78,7 @@ module.exports = class ActionFaq {
         );
     }
 
-    add_parameter(answer){
+    parse_parameter(answer){
 
     }
 

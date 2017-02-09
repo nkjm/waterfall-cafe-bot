@@ -60,7 +60,7 @@ module.exports = class ActionTurnOffLight {
         );
     }
 
-    add_parameter(answer){
+    parse_parameter(answer){
     }
 
     run(){
