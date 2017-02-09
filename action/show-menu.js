@@ -93,7 +93,7 @@ module.exports = class ActionShowMenu {
         return wfc.getMenu(that._conversation.confirmed.date).then(
             function(response){
                 let messages;
-                if (response.length == 0){
+                if (!response || response.length == 0){
                     messages = [{
                         type: "text",
                         text: "あら、該当するメニューがないようです。"
