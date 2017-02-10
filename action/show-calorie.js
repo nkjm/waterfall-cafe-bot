@@ -94,6 +94,9 @@ module.exports = class ActionShowCalorie {
                 return false;
             }
         } else if (answer_key == "plate"){
+            if (answer_value === null || answer_value == ""){
+                return false;
+            }
             // !!!Need more validation.!!!
             answer_value = answer_value;
         } else {
