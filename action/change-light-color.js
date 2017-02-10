@@ -3,6 +3,9 @@
 const memory_retention = Number(process.env.MEMORY_RETENTION);
 
 const color_mappings = [{
+    label: "白",
+    code: "ffffff"
+},{
     label: "青",
     code: "0000ff"
 },{
