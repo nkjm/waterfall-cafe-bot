@@ -131,9 +131,19 @@ module.exports = class ActionShowMenu {
                         type: "text",
                         text: ""
                     }];
-                    for (let food of response){
-                        if (food.plate && food.menu){
-                            messages[0].text += plate_mapping[food.plate] + "は「" + food.menu + "」、\n";
+                    if (that._conversation.confirmed.plate){
+                        // Reply specific menu.
+                        for (let food of response){
+                            if (food.plate == that._conversation.confirmed.plate){
+                                messages[0].text = plate_mapping[that._conversation.confirmed.plate] + "は「" + food.name + "」";
+                            }
+                        }
+                    } else {
+                        // Reply all menus.
+                        for (let food of response){
+                            if (food.plate && food.menu){
+                                messages[0].text += plate_mapping[food.plate] + "は「" + food.menu + "」、\n";
+                            }
                         }
                     }
 
