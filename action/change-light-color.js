@@ -7,22 +7,22 @@ const color_mappings = [{
     code: "ffffff"
 },{
     label: "青",
-    code: "0000ff"
+    code: "7BC9FF"
 },{
     label: "ブルー",
-    code: "0000ff"
+    code: "7BC9FF"
 },{
     label: "赤",
-    code: "ff0000"
+    code: "FF7B7B"
 },{
     label: "レッド",
-    code: "ff0000"
+    code: "FF7B7B"
 },{
     label: "黄",
     code: "FFFA6A"
 },{
     label: "イエロー",
-    code: "ffff00"
+    code: "FFFA6A"
 },{
     label: "橙",
     code: "FFA500"
@@ -34,10 +34,10 @@ const color_mappings = [{
     code: "000080"
 },{
     label: "緑",
-    code: "000800"
+    code: "A3FF7B"
 },{
     label: "グリーン",
-    code: "000800"
+    code: "A3FF7B"
 },{
     label: "ピンク",
     code: "FF69B4"
@@ -46,10 +46,10 @@ const color_mappings = [{
     code: "FF69B4"
 },{
     label: "紫",
-    code: "800080"
+    code: "E37BFF"
 },{
     label: "パープル",
-    code: "800080"
+    code: "E37BFF"
 },{
     label: "栗",
     code: "800000"
