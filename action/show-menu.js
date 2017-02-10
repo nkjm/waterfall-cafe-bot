@@ -135,7 +135,7 @@ module.exports = class ActionShowMenu {
                         // Reply specific menu.
                         for (let food of response){
                             if (food.plate == that._conversation.confirmed.plate){
-                                messages[0].text = plate_mapping[that._conversation.confirmed.plate] + "は「" + food.name + "」";
+                                messages[0].text = plate_mapping[that._conversation.confirmed.plate] + "は「" + food.menu + "」";
                             }
                         }
                     } else {
