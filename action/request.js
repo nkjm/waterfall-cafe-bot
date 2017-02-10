@@ -12,7 +12,7 @@ module.exports = class ActionRequest {
         this._conversation = conversation;
         this._line_event = line_event;
         this._required_parameter = {
-            request: {
+            content: {
                 message_to_confirm: {
                     type: "text",
                     text: "どうぞ。"
@@ -30,8 +30,14 @@ module.exports = class ActionRequest {
         console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
     }
 
-    parse_parameter(parameter){
-        return parameter;
+    parse_parameter(answer){
+        let answer_key = Object.keys(answer)[0];
+
+        // Manipulate the answer if required.
+        if (answer_key != "content"){
+            return false;
+        }
+        return answer;
     }
 
     finish(){
