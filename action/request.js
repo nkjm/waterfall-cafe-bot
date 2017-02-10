@@ -39,6 +39,6 @@ module.exports = class ActionRequest {
             type: "text",
             text: "却下。"
         }];
-        return line.replyMessage(that._line_event.replyToken, messages);
+        return line.replyMessage(this._line_event.replyToken, messages);
     }
 };
