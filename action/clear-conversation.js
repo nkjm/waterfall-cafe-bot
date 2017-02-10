@@ -36,10 +36,10 @@ module.exports = class ActionClearConversation {
         return line.replyMessage(this._line_event.replyToken, messages).then(
             function(response){
                 that._conversation = null;
-            });
+            },
             function(response){
                 return response;
-            });
+            };
         );
     }
 };
