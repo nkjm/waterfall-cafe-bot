@@ -94,6 +94,7 @@ module.exports = class ActionShowCalorie {
                 return false;
             }
         } else if (answer_key == "plate"){
+            // !!!Need more validation.!!!
             answer_value = answer_value;
         } else {
             // This is unnecessary parameter so ignore this.
@@ -129,7 +130,7 @@ module.exports = class ActionShowCalorie {
                     if (!calorie || !menu){
                         messages = [{
                             type: "text",
-                            text: "不思議なことに" + menu + "のカロリー情報が見つかりませんでした。ごめんね。"
+                            text: "不思議なことにカロリー情報が見つかりませんでした。ごめんね。"
                         }]
                     } else {
                         messages = [{
