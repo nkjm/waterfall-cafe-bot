@@ -35,7 +35,7 @@ module.exports = class ActionRequest {
     }
 
     finish(){
-        messages = [{
+        let messages = [{
             type: "text",
             text: "却下。"
         }];
