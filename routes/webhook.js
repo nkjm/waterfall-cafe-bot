@@ -61,7 +61,7 @@ router.post('/', function(req, res, next) {
         ** If some parameters are set, we save them.
         ** And then we run the process depending on each intents.
         */
-        console.log("This is Start Conversation Flow.");
+        console.log("### This is Start Conversation Flow. ###");
 
         // "message" is the only supported event on starting conversation.
         if (line_event.type != "message"){
@@ -144,7 +144,7 @@ router.post('/', function(req, res, next) {
             ** It seems this event is related to the existing conversation.
             ** We assume this event is the reply to fill out the parameter.
             */
-            console.log("This is Reply Flow.");
+            console.log("### This is Reply Flow. ###");
 
             /*
             ** Supported event type is "message" and "postback". Otherwise, the event is ignored.
@@ -199,20 +199,19 @@ router.post('/', function(req, res, next) {
                 }
             );
         } else {
-            console.log("Flow is Change Parameter or Change Intent.");
-
-            /*
-            ** While postback is considerable in case of Change Parameter Flow, we does not support it at present so only supported event type is message.
-            */
-            if (line_event.type != "message"){
+            // Will be instantiated later on.
+            let action;
+            let text;
+            if (line_event.type == "message"){
+                text = line_event.message.text;
+            } else if (line_event.type == "postback"){
+                text = line_event.postback.data;
+            } else {
                 console.log("Not supported event type in this flow.");
                 return;
             }
 
-            // Will be instantiated later on.
-            let action;
-
-            flow.identify_intent(line_event.source.userId, line_event.message.text).then(
+            flow.identify_intent(line_event.source.userId, text).then(
                 function(response){
                     console.log("Intent is " + response.result.action);
 
@@ -224,7 +223,7 @@ router.post('/', function(req, res, next) {
                         ** So we keep existing parameters while changeing the intent.
                         ** While the name of the flow is "CHANGE Intent", there is a possiblity that intent is same as previous event.
                         */
-                        console.log("This is Change Intent Flow.");
+                        console.log("### This is Change Intent Flow. ###");
 
                         // Set new intent while keeping other data.
                         conversation.intent = response.result;
@@ -272,7 +271,7 @@ router.post('/', function(req, res, next) {
                                     ** ### This is "Change Parameter" Flow. ###
                                     ** ########################################
                                     */
-                                    console.log("This is change parameter flow.");
+                                    console.log("### This is change parameter flow. ###");
                                     flow.add_parameter(action._conversation, parameter);
 
                                     /*
@@ -284,11 +283,11 @@ router.post('/', function(req, res, next) {
                             }
                         }
 
-                        /* #####################################
-                        ** ### This Start Conversation Flow. ###
-                        ** #####################################
+                        /* #############################################
+                        ** ### This Another Start Conversation Flow. ###
+                        ** #############################################
                         */
-                        console.log("This is Start Conversation Flow. And the intent is " + response.result.action + ".");
+                        console.log("### This is Another Start Conversation Flow. And the intent is " + response.result.action + ". ###");
 
                         // Instantiate the conversation object. This will be saved as Bot Memory.
                         conversation = {
