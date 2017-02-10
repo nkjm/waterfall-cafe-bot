@@ -99,9 +99,9 @@ module.exports = class ActionShowCalorie {
                 answer_value = "a";
             } else if (answer_value.match(/Plate B/) || answer_value.match(/PLATE B/) || answer_value.match(/plate b/) || answer_value.match(/プレートB/) || answer_value.match(/プレート B/) || answer_value.match(/プレート b/) || answer_value.match(/PLATE b/) || answer_value.match(/^[bB]$/) || answer_value.match(/^[bB].$/) || answer_value.match(/^[bB]。$/)){
                 answer_value = "b";
-            } else if (answer_value.match(/Plate 600/) || answer_value.match(/PLATE 600/) || answer_value.match(/plate 600/) || answer_value.match(/プレート600/) || answer_value.match(/プレート 600/) || answer_value.match(/PLATE600/) || answer_value.match(/^600$/) || answer_value.match(/^600。$/) || answer_value.match(/^600.$/)){
+            } else if (answer_value.match(/Plate 600/) || answer_value.match(/PLATE 600/) || answer_value.match(/plate 600/) || answer_value.match(/プレート600/) || answer_value.match(/プレート 600/) || answer_value.match(/PLATE600/) || answer_value.match(/^600$/) || answer_value.match(/^600。$/) || answer_value.match(/^600.$/) || answer_value.match(/p600/)){
                 answer_value = "p600";
-            } else if (answer_value.match(/[dD][oO][nN] [sS][eE][tT]/) || answer_value.match(/[dD][oO][nN]セット/) || answer_value.match(/[dD][oO][nN] セット/) || answer_value.match(/丼セット/) || answer_value.match(/丼 セット/) || answer_value.match(/丼[sS][eE][tT]/) || answer_value.match(/丼 [sS][eE][tT]/) || answer_value.match(/丼/)){
+            } else if (answer_value.match(/[dD][oO][nN] [sS][eE][tT]/) || answer_value.match(/[dD][oO][nN]セット/) || answer_value.match(/[dD][oO][nN] セット/) || answer_value.match(/丼セット/) || answer_value.match(/丼 セット/) || answer_value.match(/丼[sS][eE][tT]/) || answer_value.match(/丼 [sS][eE][tT]/) || answer_value.match(/丼/) || answer_value.match(/[dD][oO][nN]/)){
                 answer_value = "don";
             } else if (answer_value.match(/[nN][oO][oO][dD][lL][eE]/) || answer_value.match(/ヌードル/) || answer_value.match(/麺/)){
                 answer_value = "noodle";

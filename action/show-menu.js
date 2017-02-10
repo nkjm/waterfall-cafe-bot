@@ -85,6 +85,26 @@ module.exports = class ActionShowMenu {
                 // This is not suitable parameter for date.
                 return false;
             }
+        } else if (answer_key == "plate"){
+            if (answer_value === null || answer_value == ""){
+                return false;
+            }
+            if (answer_value.match(/Plate A/) || answer_value.match(/PLATE A/) || answer_value.match(/plate a/) || answer_value.match(/プレートA/) || answer_value.match(/プレート A/) || answer_value.match(/プレート a/) || answer_value.match(/PLATE a/) || answer_value.match(/^[aA]$/) || answer_value.match(/^[aA].$/) || answer_value.match(/^[aA]。$/)){
+                answer_value = "a";
+            } else if (answer_value.match(/Plate B/) || answer_value.match(/PLATE B/) || answer_value.match(/plate b/) || answer_value.match(/プレートB/) || answer_value.match(/プレート B/) || answer_value.match(/プレート b/) || answer_value.match(/PLATE b/) || answer_value.match(/^[bB]$/) || answer_value.match(/^[bB].$/) || answer_value.match(/^[bB]。$/)){
+                answer_value = "b";
+            } else if (answer_value.match(/Plate 600/) || answer_value.match(/PLATE 600/) || answer_value.match(/plate 600/) || answer_value.match(/プレート600/) || answer_value.match(/プレート 600/) || answer_value.match(/PLATE600/) || answer_value.match(/^600$/) || answer_value.match(/^600。$/) || answer_value.match(/^600.$/) || answer_value.match(/p600/)){
+                answer_value = "p600";
+            } else if (answer_value.match(/[dD][oO][nN] [sS][eE][tT]/) || answer_value.match(/[dD][oO][nN]セット/) || answer_value.match(/[dD][oO][nN] セット/) || answer_value.match(/丼セット/) || answer_value.match(/丼 セット/) || answer_value.match(/丼[sS][eE][tT]/) || answer_value.match(/丼 [sS][eE][tT]/) || answer_value.match(/丼/) || answer_value.match(/[dD][oO][nN]/)){
+                answer_value = "don";
+            } else if (answer_value.match(/[nN][oO][oO][dD][lL][eE]/) || answer_value.match(/ヌードル/) || answer_value.match(/麺/)){
+                answer_value = "noodle";
+            } else if (answer_value.match(/[pP][aA][sS][tT][aA]/) || answer_value.match(/パスタ/) || answer_value.match(/スパゲッティ/) || answer_value.match(/スパゲッティー/)){
+                answer_value = "pasta";
+            } else {
+                // This is not suitable parameter for plate
+                return false;
+            }
         } else {
             // This is unnecessary parameter so ignore this.
             return false;
