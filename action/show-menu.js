@@ -81,8 +81,11 @@ module.exports = class ActionShowMenu {
                 answer_value = yyyymmdd.tomorrow();
             } else if (answer_value.match(/明後日/) || answer_value.match(/あさって/)){
                 answer_value = yyyymmdd.day_after_tomorrow();
+            } else if (yyyymmdd.parse(answer_value)){
+                answer_value = answer_value;
             } else {
-                console.log("Assume value is yyyy-mm-dd");
+                // This is not suitable parameter for date.
+                return false;
             }
         } else {
             // This is unnecessary parameter so ignore this.

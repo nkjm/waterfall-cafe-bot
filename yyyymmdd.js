@@ -35,4 +35,12 @@ module.exports = class yyyymmdd {
         let yyyymmdd = d.getFullYear() + "-" + (Number(d.getMonth()) + 1) + "-" + d.getDate();
         return yyyymmdd;
     }
+
+    static parse(yyyymmdd){
+        let reg = /(\d{4})-(0[1-9]|1[0-2]|[1-9])-(0[1-9]|[12][0-9]|3[01]|[1-9])/;
+        if (reg.exec(yyyymmdd)){
+            return true;
+        }
+        return false;
+    }
 };

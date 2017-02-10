@@ -77,14 +77,21 @@ module.exports = class ActionShowCalorie {
             if (answer_value === null || answer_value == ""){
                 return false;
             }
-            if (answer_value.match(/昨日/)){
+            if  (answer_value.match(/一昨日/) || answer_value.match(/おととい/)){
+                answer_value = yyyymmdd.day_before_yesterday();
+            } else (answer_value.match(/昨日/)){
                 answer_value = yyyymmdd.yesterday();
             } else if (answer_value.match(/今日/)){
                 answer_value = yyyymmdd.today();
             } else if (answer_value.match(/明日/)){
                 answer_value = yyyymmdd.tomorrow();
+            } else if (answer_value.match(/明後日/) || answer_value.match(/あさって/)){
+                answer_value = yyyymmdd.day_after_tomorrow();
+            } else if (yyyymmdd.parse(answer_value)){
+                answer_value = answer_value;
             } else {
-                console.log("Assume when is yyyy-mm-dd.");
+                // This is not suitable parameter for date.
+                return false;
             }
         } else if (answer_key == "plate"){
             answer_value = answer_value;
