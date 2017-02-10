@@ -118,21 +118,23 @@ module.exports = class ActionShowCalorie {
 
                     // Identify the calorie.
                     let calorie;
+                    let food_name;
                     for (let food of response){
                         if (food.plate == that._conversation.confirmed.plate){
                             calorie = food.calorie;
+                            food_name = food.name;
                         }
                     }
 
-                    if (!calorie){
+                    if (!calorie || !food_name){
                         messages = [{
                             type: "text",
-                            text: "不思議なことに" + plate_mapping[that._conversation.confirmed.plate] + "のカロリー情報が見つかりませんでした。ごめんね。"
+                            text: "不思議なことに" + food_name + "のカロリー情報が見つかりませんでした。ごめんね。"
                         }]
                     } else {
                         messages = [{
                             type: "text",
-                            text: plate_mapping[that._conversation.confirmed.plate] + "は" + calorie + "kcalです。"
+                            text: food_name + "は" + calorie + "kcalです。"
                         }]
                     }
                 }
