@@ -30,7 +30,7 @@ module.exports = class ActionClearConversation {
     finish(){
         let messages = [{
             type: "text",
-            text: this._conversation.fulfillment.speech
+            text: this._conversation.intent.fulfillment.speech
         }];
         let that = this;
         return line.replyMessage(this._line_event.replyToken, messages).then(
