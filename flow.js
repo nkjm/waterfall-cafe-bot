@@ -14,6 +14,7 @@ let action_turn_on_light = require('./action/turn-on-light');
 let action_turn_off_light = require('./action/turn-off-light');
 let action_change_light_color = require('./action/change-light-color');
 let action_faq = require('./action/faq');
+let action_request = require('./action/request');
 
 module.exports = class Flow {
     static identify_intent(session_id, text){
@@ -48,6 +49,9 @@ module.exports = class Flow {
                 break;
             case "change-light-color":
                 action = new action_change_light_color(conversation, line_event);
+                break;
+            case "request":
+                action = new action_request(conversation, line_event);
                 break;
             default:
                 action = new action_faq(conversation, line_event);
