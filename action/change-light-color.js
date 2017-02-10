@@ -19,7 +19,7 @@ const color_mappings = [{
     code: "ff0000"
 },{
     label: "黄",
-    code: "ffff00"
+    code: "FFFA6A"
 },{
     label: "イエロー",
     code: "ffff00"
