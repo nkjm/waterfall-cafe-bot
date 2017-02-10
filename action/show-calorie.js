@@ -77,9 +77,9 @@ module.exports = class ActionShowCalorie {
             if (answer_value === null || answer_value == ""){
                 return false;
             }
-            if  (answer_value.match(/一昨日/) || answer_value.match(/おととい/)){
+            if (answer_value.match(/一昨日/) || answer_value.match(/おととい/)){
                 answer_value = yyyymmdd.day_before_yesterday();
-            } else (answer_value.match(/昨日/)){
+            } else if (answer_value.match(/昨日/)){
                 answer_value = yyyymmdd.yesterday();
             } else if (answer_value.match(/今日/)){
                 answer_value = yyyymmdd.today();
