@@ -39,7 +39,7 @@ module.exports = class ActionClearConversation {
             },
             function(response){
                 return response;
-            };
+            }
         );
     }
 };
