@@ -7,10 +7,10 @@ const color_mappings = [{
     code: "ffffff"
 },{
     label: "青",
-    code: "B0B0FF"
+    code: "9AB7FF"
 },{
     label: "ブルー",
-    code: "B0B0FF"
+    code: "9AB7FF"
 },{
     label: "赤",
     code: "FF7B7B"
