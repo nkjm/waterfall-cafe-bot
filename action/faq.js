@@ -13,13 +13,11 @@ module.exports = class ActionFaq {
         this._line_event = line_event;
         this._required_parameter = {};
 
-        // If this is the very first time of the conversation, we set to_confirm following required_parameter.
-        if (
-            Object.keys(this._conversation.to_confirm).length == 0 &&
-            Object.keys(this._required_parameter).length > 0 &&
-            Object.keys(this._conversation.confirmed).length == 0
-        ){
-            this._conversation.to_confirm = this._required_parameter;
+        // Scan confirmed parameters and if missing required parameters found, we add them to to_confirm.
+        for (let req_param_key of Object.keys(this._required_parameter)){
+            if (!this._conversation.confirmed[req_param_key] && !this._conversation.to_confirm[req_param_key]){
+                this._conversation.to_confirm[req_param_key] = this._required_parameter[req_param_key];
+            }
         }
 
         console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
@@ -44,7 +42,7 @@ module.exports = class ActionFaq {
                         text: striptags(response.solution)
                     }];
                 }
-                
+
                 return line.replyMessage(that._line_event.replyToken, messages);
             },
             function(response){
