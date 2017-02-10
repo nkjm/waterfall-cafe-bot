@@ -56,6 +56,12 @@ module.exports = class ActionShowCalorie {
         }
 
         // If this is the very first time of the conversation, we set to_confirm following required_parameter.
+        for (let req_param_key of Object.keys(this._required_parameter)){
+            if (!this._conversation.confirmed[req_param_key] && !this._conversation.to_confirm[req_param_key]){
+                this._conversation.to_confirm[req_param_key] = this._required_parameter[req_param_key];
+            }
+        }
+        /*
         if (
             Object.keys(this._conversation.to_confirm).length == 0 &&
             Object.keys(this._required_parameter).length > 0 &&
@@ -63,6 +69,7 @@ module.exports = class ActionShowCalorie {
         ){
             this._conversation.to_confirm = this._required_parameter;
         }
+        */
 
         console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
     }
