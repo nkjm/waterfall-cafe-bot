@@ -62,7 +62,7 @@ module.exports = class StartConversationFlow {
                     ** Run the intent oriented action.
                     ** This may lead collection of another parameter or final action for this intent.
                     */
-                    return flow_tool.run(that.action);
+                    return flow_tool.run(that.action, that.line_event, that.conversation);
                 },
                 function(response){
                     console.log("Failed to indentify intent.");

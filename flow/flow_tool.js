@@ -118,9 +118,9 @@ module.exports = class FlowTool {
         return line.replyMessage(reply_token, messages);
     }
 
-    static run(action){
-        if (Object.keys(action._conversation.to_confirm).length > 0){
-            return FlowTool.collect(action._conversation, action._line_event.replyToken);
+    static run(action, line_event, conversation){
+        if (Object.keys(conversation.to_confirm).length > 0){
+            return FlowTool.collect(conversation, line_event.replyToken);
         }
         return action.finish();
     }
