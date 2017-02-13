@@ -61,7 +61,7 @@ router.post('/', function(req, res, next) {
         ** If some parameters are set, we save them.
         ** And then we run the process depending on each intents.
         */
-        console.log("### This is Start Conversation Flow. ###");
+        console.log("\n### This is Start Conversation Flow. ###\n");
 
         // "message" is the only supported event on starting conversation.
         if (line_event.type != "message"){
@@ -144,7 +144,7 @@ router.post('/', function(req, res, next) {
             ** It seems this event is related to the existing conversation.
             ** We assume this event is the reply to fill out the parameter.
             */
-            console.log("### This is Reply Flow. ###");
+            console.log("\n### This is Reply Flow. ###\n");
 
             /*
             ** Supported event type is "message" and "postback". Otherwise, the event is ignored.
@@ -223,7 +223,7 @@ router.post('/', function(req, res, next) {
                         ** So we keep existing parameters while changeing the intent.
                         ** While the name of the flow is "CHANGE Intent", there is a possiblity that intent is same as previous event.
                         */
-                        console.log("### This is Change Intent Flow. ###");
+                        console.log("\n### This is Change Intent Flow. ###\n");
 
                         // Set new intent while keeping other data.
                         conversation.intent = response.result;
@@ -287,7 +287,7 @@ router.post('/', function(req, res, next) {
                         ** ### This Another Start Conversation Flow. ###
                         ** #############################################
                         */
-                        console.log("### This is Another Start Conversation Flow. And the intent is " + response.result.action + ". ###");
+                        console.log("\n### This is Another Start Conversation Flow. And the intent is " + response.result.action + ". ###\n");
 
                         // Instantiate the conversation object. This will be saved as Bot Memory.
                         conversation = {
@@ -338,7 +338,7 @@ router.post('/', function(req, res, next) {
                     console.log(action._conversation);
 
                     // Update memory.
-                    memory.put(line_event.source.userId, conversation, memory_retention);
+                    memory.put(line_event.source.userId, action._conversation, memory_retention);
                 },
                 function(response){
                     console.log("Failed to process event.");
