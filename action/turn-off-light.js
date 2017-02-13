@@ -15,7 +15,7 @@ module.exports = class ActionTurnOffLight {
     }
 
     finish(line_event, conversation){
-        return hue.all_turn_off().then(
+        return hue.turn_off().then(
             function(response){
                 let messages = [{
                     type: "text",

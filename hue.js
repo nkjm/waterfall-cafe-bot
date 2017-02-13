@@ -8,7 +8,7 @@ const MAKER_KEY = process.env.MAKER_KEY;
 module.exports = class Hue {
     static change_color(color){
         return new Promise(function(resolve, reject){
-            let url = MAKER_URL_PREFIX + 'hue_change_color/with/key/' + MAKER_KEY;
+            let url = MAKER_URL_PREFIX + 'wfc_change_light_color/with/key/' + MAKER_KEY;
             let body = {value1: color};
             request({
                 method: "POST",
@@ -21,9 +21,9 @@ module.exports = class Hue {
         });
     }
 
-    static all_turn_on(){
+    static turn_on(){
         return new Promise(function(resolve, reject){
-            let url = MAKER_URL_PREFIX + 'hue_all_turn_on/with/key/' + MAKER_KEY;
+            let url = MAKER_URL_PREFIX + 'wfc_turn_on_light/with/key/' + MAKER_KEY;
             request({
                 method: "POST",
                 url: url,
@@ -34,9 +34,9 @@ module.exports = class Hue {
         });
     }
 
-    static all_turn_off(){
+    static turn_off(){
         return new Promise(function(resolve, reject){
-            let url = MAKER_URL_PREFIX + 'hue_all_turn_off/with/key/' + MAKER_KEY;
+            let url = MAKER_URL_PREFIX + 'wfc_turn_off_light/with/key/' + MAKER_KEY;
             request({
                 method: "POST",
                 url: url,
