@@ -11,7 +11,7 @@ module.exports = class WaterfallCafe {
         return base64url(crypto.randomBytes(size));
     }
 
-    static createUser(user){
+    static upsertUser(user){
         return new Promise(function(resolve, reject){
             let headers = {
                 'Content-Type': 'application/json'

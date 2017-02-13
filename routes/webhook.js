@@ -45,9 +45,10 @@ router.post('/', function(req, res, next) {
     if (line_event.type == "follow"){
         let main = line.getProfile(line_event.source.userId).then(
             function(response){
-                console.log(response);
                 let user = response;
-                return wfc.createUser(user);
+
+                // Upsert User.
+                return wfc.upsertUser(user);
             },
             function(response){
                 console.log("Failed to get LINE User Profile.");
