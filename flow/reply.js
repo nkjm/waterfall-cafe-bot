@@ -48,7 +48,7 @@ module.exports = class ReplyFlow {
             parameter[that.conversation.confirming] = that.line_event.postback.data;
         }
         if (parameter !== {}){
-            parameter = action.parse_parameter(parameter);
+            parameter = that.action.parse_parameter(parameter);
 
             if (parameter){
                 flow_tool.add_parameter(that.conversation, parameter);

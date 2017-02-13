@@ -47,8 +47,8 @@ module.exports = class ChangeParameterFlow {
             parameter[conversation.previous.confirmed] = line_event.postback.data;
         }
         if (parameter !== {}){
-            let action = flow_tool.instantiate_action(conversation.intent.action);
-            parameter = action.parse_parameter(parameter);
+            that.action = flow_tool.instantiate_action(conversation.intent.action);
+            parameter = that.action.parse_parameter(parameter);
             if (parameter){
                 flow_tool.add_parameter(that.conversation, parameter);
             }

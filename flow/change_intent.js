@@ -44,7 +44,7 @@ module.exports = class ChangeIntentFlow {
             for (let param_key of Object.keys(that.conversation.intent.parameters)){
                 let parameter = {};
                 parameter[param_key] = that.conversation.intent.parameters[param_key];
-                parameter = action.parse_parameter(parameter);
+                parameter = that.action.parse_parameter(parameter);
 
                 if (parameter){
                     flow_tool.add_parameter(that.conversation, parameter);
