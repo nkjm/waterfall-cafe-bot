@@ -16,7 +16,7 @@ module.exports = class WaterfallCafe {
             let headers = {
                 'Content-Type': 'application/json'
             };
-            let url = dbPrefix + '/user';
+            let url = API_BASE + '/user';
 
             // 認証用のセキュリティコードを生成
             user.security_code = WaterfallCafe.randomStringAsBase64Url(40);
