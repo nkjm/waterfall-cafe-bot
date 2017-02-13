@@ -74,11 +74,11 @@ module.exports = class ActionShowMenu {
             if (param_value === null || param_value == ""){
                 return false;
             }
-            if (param_value.match(/Plate A/) || param_value.match(/PLATE A/) || param_value.match(/plate a/) || param_value.match(/プレートA/) || param_value.match(/プレート A/) || param_value.match(/プレート a/) || param_value.match(/PLATE a/) || param_value.match(/^[aA]$/) || param_value.match(/^[aA].$/) || param_value.match(/^[aA]。$/)){
+            if (param_value.match(/[pP][lL][aA][tT][eE] [aA]/) || param_value.match(/プレート[aA]/) || param_value.match(/プレート [aA]/) || param_value.match(/^[aA]$/) || param_value.match(/^[aA].$/) || param_value.match(/^[aA]。$/)){
                 param_value = "a";
-            } else if (param_value.match(/Plate B/) || param_value.match(/PLATE B/) || param_value.match(/plate b/) || param_value.match(/プレートB/) || param_value.match(/プレート B/) || param_value.match(/プレート b/) || param_value.match(/PLATE b/) || param_value.match(/^[bB]$/) || param_value.match(/^[bB].$/) || param_value.match(/^[bB]。$/)){
+            } else if (param_value.match(/[pP][lL][aA][tT][eE] [bB]/) || param_value.match(/プレート[bB]/) || param_value.match(/プレート [bB]/) || param_value.match(/^[bB]$/) || param_value.match(/^[bB].$/) || param_value.match(/^[bB]。$/)){
                 param_value = "b";
-            } else if (param_value.match(/Plate 600/) || param_value.match(/PLATE 600/) || param_value.match(/plate 600/) || param_value.match(/プレート600/) || param_value.match(/プレート 600/) || param_value.match(/PLATE600/) || param_value.match(/^600$/) || param_value.match(/^600。$/) || param_value.match(/^600.$/) || param_value.match(/p600/)){
+            } else if (param_value.match(/[pP][lL][aA][tT][eE] 600/) || param_value.match(/[pP][lL][aA][tT][eE]600/) || param_value.match(/プレート600/) || param_value.match(/プレート 600/) || param_value.match(/^600$/) || param_value.match(/^600。$/) || param_value.match(/^600.$/) || param_value.match(/p600/)){
                 param_value = "p600";
             } else if (param_value.match(/[dD][oO][nN] [sS][eE][tT]/) || param_value.match(/[dD][oO][nN]セット/) || param_value.match(/[dD][oO][nN] セット/) || param_value.match(/丼セット/) || param_value.match(/丼 セット/) || param_value.match(/丼[sS][eE][tT]/) || param_value.match(/丼 [sS][eE][tT]/) || param_value.match(/丼/) || param_value.match(/[dD][oO][nN]/)){
                 param_value = "don";
