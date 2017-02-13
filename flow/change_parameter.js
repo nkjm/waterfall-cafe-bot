@@ -41,13 +41,13 @@ module.exports = class ChangeParameterFlow {
         ** If api.ai return some parameters. we save them in conversation object so that Bot can remember.
         */
         let parameter = {};
-        if (line_event.type == "message"){
-            parameter[conversation.previous.confirmed] = line_event.message.text;
-        } else if (line_event.type == "postback"){
-            parameter[conversation.previous.confirmed] = line_event.postback.data;
+        if (that.line_event.type == "message"){
+            parameter[that.conversation.previous.confirmed] = that.line_event.message.text;
+        } else if (that.line_event.type == "postback"){
+            parameter[that.conversation.previous.confirmed] = that.line_event.postback.data;
         }
         if (parameter !== {}){
-            that.action = flow_tool.instantiate_action(conversation.intent.action);
+            that.action = flow_tool.instantiate_action(that.conversation.intent.action);
             parameter = that.action.parse_parameter(parameter);
             if (parameter){
                 flow_tool.add_parameter(that.conversation, parameter);
