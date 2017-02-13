@@ -14,6 +14,7 @@ let Promise = require('bluebird');
 let memory = require('memory-cache');
 let line = require('../line');
 let flow = require('../flow');
+let wfc = require('../waterfall-cafe');
 
 /*
 ** Middleware Configuration
@@ -37,6 +38,32 @@ router.post('/', function(req, res, next) {
     console.log("Signature validation succeeded.");
 
     let line_event = req.body.events[0];
+
+    /*
+    ** ### Follow Event Handler
+    */
+    if (line_event.type == "follow"){
+        let main = line.getProfile(line_event.source.userId).then(
+            function(response){
+                console.log(response);
+                let user = response;
+                return wfc.createUser(user);
+            },
+            function(response){
+                console.log("Failed to get LINE User Profile.");
+                return Promise.reject(response);
+            }
+        ).then(
+            function(response){
+                console.log("End of webhook process.");
+            },
+            function(response){
+                console.log("Failed to handle follow event.");
+                console.log(response);
+            }
+        )
+        return;
+    } // End of Follow Event Handler
 
     /*
     ** ### Flow Identification ###

@@ -2,9 +2,42 @@
 
 let request = require('request');
 let Promise = require('bluebird');
+let crypto = require('crypto');
+let base64url = require('base64url');
 const API_BASE = "https://apex.oracle.com/pls/apex/" + process.env.ORACLE_WORKSPACE + "/wfc";
 
 module.exports = class WaterfallCafe {
+    static randomStringAsBase64Url(size) {
+        return base64url(crypto.randomBytes(size));
+    }
+
+    static createUser(user){
+        return new Promise(function(resolve, reject){
+            let headers = {
+                'Content-Type': 'application/json'
+            };
+            let url = dbPrefix + '/user';
+
+            // 認証用のセキュリティコードを生成
+            user.security_code = WaterfallCafe.randomStringAsBase64Url(40);
+
+            request({
+                url: url,
+                method: 'POST',
+                headers: headers,
+                body: user,
+                json: true,
+            }, function (error, response, body) {
+                if (error) {
+                    return reject(error);
+                }
+                if (response.statusCode != 200){
+                    return reject(response);
+                }
+                return resolve(person);
+            });
+        });
+    }
 
     static getMenu(when){
         return new Promise(function(resolve, reject){
