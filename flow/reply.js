@@ -19,44 +19,45 @@ module.exports = class ReplyFlow {
     run(){
         console.log("\n### This is Reply Flow. ###\n");
         let that = this;
-        return new Promise(function(resolve, reject){
-            /*
-            ** Supported event type is "message" and "postback". Otherwise, the event is ignored.
-            */
-            if (that.line_event.type != "message" && that.line_event.type != "postback"){
-                console.log("Not supported event type in this flow.");
-                return resolve();
+
+        /*
+        ** Supported event type is "message" and "postback". Otherwise, the event is ignored.
+        */
+        if (that.line_event.type != "message" && that.line_event.type != "postback"){
+            console.log("Not supported event type in this flow.");
+            return new Promise(function(resolve, reject){
+                resolve();
+            });
+        }
+
+        /*
+        ** Instantiate action depending on the intent.
+        ** The implementations of each action are located under /action directory.
+        */
+        that.action = flow_tool.instantiate_action(that.conversation.intent.action);
+        that.conversation.to_confirm = flow_tool.identify_to_confirm_parameter(that.action.required_parameter, that.conversation.confirmed);
+
+        /*
+        ** We save the message text or data as the value of the parameter.
+        */
+        let parameter = {};
+        if (that.line_event.type == "message"){
+            parameter[that.conversation.confirming] = that.line_event.message.text;
+        } else if (that.line_event.type == "postback"){
+            parameter[that.conversation.confirming] = that.line_event.postback.data;
+        }
+        if (parameter !== {}){
+            parameter = action.parse_parameter(parameter);
+
+            if (parameter){
+                flow_tool.add_parameter(that.conversation, parameter);
             }
+        }
 
-            /*
-            ** Instantiate action depending on the intent.
-            ** The implementations of each action are located under /action directory.
-            */
-            that.action = flow_tool.instantiate_action(that.conversation.intent.action);
-            that.conversation.to_confirm = flow_tool.identify_to_confirm_parameter(that.action.required_parameter, that.conversation.confirmed);
-
-            /*
-            ** We save the message text or data as the value of the parameter.
-            */
-            let parameter = {};
-            if (that.line_event.type == "message"){
-                parameter[that.conversation.confirming] = that.line_event.message.text;
-            } else if (that.line_event.type == "postback"){
-                parameter[that.conversation.confirming] = that.line_event.postback.data;
-            }
-            if (parameter !== {}){
-                parameter = action.parse_parameter(parameter);
-
-                if (parameter){
-                    flow_tool.add_parameter(that.conversation, parameter);
-                }
-            }
-
-            /*
-            ** Run the intent oriented action.
-            ** This may lead collection of another parameter or final action for this intent.
-            */
-            return flow_tool.run(that.action, that.line_event, that.conversation);
-        });
+        /*
+        ** Run the intent oriented action.
+        ** This may lead collection of another parameter or final action for this intent.
+        */
+        return flow_tool.run(that.action, that.line_event, that.conversation);
     }
 }
