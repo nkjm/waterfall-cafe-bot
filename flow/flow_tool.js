@@ -122,6 +122,6 @@ module.exports = class FlowTool {
         if (Object.keys(conversation.to_confirm).length > 0){
             return FlowTool.collect(conversation, line_event.replyToken);
         }
-        return action.finish();
+        return action.finish(line_event, conversation);
     }
 };
