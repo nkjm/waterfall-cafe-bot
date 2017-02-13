@@ -30,7 +30,7 @@ module.exports = class WaterfallCafe {
                 url: url,
                 method: 'POST',
                 headers: headers,
-                body: user,
+                body: body,
                 json: true,
             }, function (error, response, body) {
                 if (error) {
