@@ -18,9 +18,8 @@ module.exports = class ReplyFlow {
 
     run(){
         console.log("\n### This is Reply Flow. ###\n");
+        let that = this;
         return new Promise(function(resolve, reject){
-            let that = this;
-
             /*
             ** Supported event type is "message" and "postback". Otherwise, the event is ignored.
             */
