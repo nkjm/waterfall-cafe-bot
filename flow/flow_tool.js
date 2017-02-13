@@ -26,6 +26,7 @@ module.exports = class FlowTool {
                 to_confirm[req_param_key] = required_parameter[req_param_key];
             }
         }
+        console.log("We have " + Object.keys(to_confirm).length + " parameters to confirm.");
         return to_confirm;
     }
 

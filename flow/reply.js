@@ -33,7 +33,7 @@ module.exports = class ReplyFlow {
             ** The implementations of each action are located under /action directory.
             */
             that.action = flow_tool.instantiate_action(that.conversation.intent.action);
-            that.action.to_confirm = flow_tool.identify_to_confirm_parameter(that.action.required_parameter, that.conversation.confirmed);
+            that.conversation.to_confirm = flow_tool.identify_to_confirm_parameter(that.action.required_parameter, that.conversation.confirmed);
 
             /*
             ** We save the message text or data as the value of the parameter.

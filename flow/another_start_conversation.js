@@ -35,7 +35,8 @@ module.exports = class AnotherStartConversationFlow {
             ** The implementations of each action are located under /action directory.
             */
             that.action = flow_tool.instantiate_action(that.conversation.intent.action);
-            that.action.to_confirm = flow_tool.identify_to_confirm_parameter(that.action.required_parameter, that.conversation.confirmed);
+            that.conversation.to_confirm = flow_tool.identify_to_confirm_parameter(that.action.required_parameter, that.conversation.confirmed);
+
 
             /*
             ** If api.ai return some parameters. we save them in conversation object so that Bot can remember.
