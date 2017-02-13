@@ -22,6 +22,7 @@ module.exports = class WaterfallCafe {
                 display_name: user.displayName,
                 picture_url: user.pictureUrl
             }
+            let new_user = body;
 
             // 認証用のセキュリティコードを生成
             body.security_code = WaterfallCafe.randomStringAsBase64Url(40);
@@ -39,7 +40,7 @@ module.exports = class WaterfallCafe {
                 if (response.statusCode != 200){
                     return reject(response);
                 }
-                return resolve(person);
+                return resolve(new_user);
             });
         });
     }
