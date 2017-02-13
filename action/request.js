@@ -17,7 +17,7 @@ module.exports = class ActionRequest {
     }
 
     parse_parameter(param){
-        let param_key = Object.keys(answer)[0];
+        let param_key = Object.keys(param)[0];
 
         // Manipulate the answer if required.
         if (param_key != "content"){

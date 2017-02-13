@@ -43,8 +43,8 @@ module.exports = class ActionShowCalorie {
     }
 
     parse_parameter(param){
-        let param_key = Object.keys(answer)[0];
-        let param_value = answer[Object.keys(answer)[0]];
+        let param_key = Object.keys(param)[0];
+        let param_value = answer[Object.keys(param)[0]];
         let parsed_param = {};
 
         // Manipulate the answer if required.
