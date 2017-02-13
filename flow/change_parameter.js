@@ -14,7 +14,7 @@ module.exports = class ChangeParameterFlow {
 
     constructor(line_event, conversation) {
         this.line_event = line_event;
-        this.conversation = null;
+        this.conversation = conversation;
         this.action = null;
     }
 
