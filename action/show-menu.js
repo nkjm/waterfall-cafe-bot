@@ -1,29 +1,15 @@
 'use strict';
 
-const plate_mapping = {
-    a: "Plate A",
-    b: "Plate B",
-    don: "丼セット",
-    noodle: "麺",
-    pasta: "パスタ",
-    p600: "Plate 600"
-}
-const memory_retention = Number(process.env.MEMORY_RETENTION);
-
 let Promise = require('bluebird');
 let memory = require('memory-cache');
 let wfc = require('../waterfall-cafe');
 let line = require('../line');
 let yyyymmdd = require('../yyyymmdd');
 
-
-
 module.exports = class ActionShowMenu {
 
-    constructor(conversation, line_event) {
-        this._conversation = conversation;
-        this._line_event = line_event;
-        this._required_parameter = {
+    constructor() {
+        this.required_parameter = {
             date: {
                 message_to_confirm: {
                     type: "template",
@@ -47,60 +33,59 @@ module.exports = class ActionShowMenu {
                     }
                 }
             }
-        }
-
-        // Scan confirmed parameters and if missing required parameters found, we add them to to_confirm.
-        for (let req_param_key of Object.keys(this._required_parameter)){
-            if (!this._conversation.confirmed[req_param_key] && !this._conversation.to_confirm[req_param_key]){
-                this._conversation.to_confirm[req_param_key] = this._required_parameter[req_param_key];
-            }
-        }
-
-        console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
+        };
+        this.plate_mapping = {
+            a: "Plate A",
+            b: "Plate B",
+            don: "丼セット",
+            noodle: "麺",
+            pasta: "パスタ",
+            p600: "Plate 600"
+        };
     }
 
-    parse_parameter(answer){
-        let answer_key = Object.keys(answer)[0];
-        let answer_value = answer[Object.keys(answer)[0]];
-        let parameter = {};
+    parse_parameter(param){
+        let param_key = Object.keys(param)[0];
+        let param_value = param[Object.keys(param)[0]];
+        let parsed_param = {};
 
         // Manipulate the answer for date if required.
-        if (answer_key == "date"){
-            if (answer_value === null || answer_value == ""){
+        if (param_key == "date"){
+            if (param_value === null || param_value == ""){
                 return false;
             }
-            if (answer_value.match(/一昨日/) || answer_value.match(/おととい/)){
-                answer_value = yyyymmdd.day_before_yesterday();
-            } else if (answer_value.match(/昨日/)){
-                answer_value = yyyymmdd.yesterday();
-            } else if (answer_value.match(/今日/)){
-                answer_value = yyyymmdd.today();
-            } else if (answer_value.match(/明日/)){
-                answer_value = yyyymmdd.tomorrow();
-            } else if (answer_value.match(/明後日/) || answer_value.match(/あさって/)){
-                answer_value = yyyymmdd.day_after_tomorrow();
-            } else if (yyyymmdd.parse(answer_value)){
-                answer_value = answer_value;
+            if (param_value.match(/一昨日/) || param_value.match(/おととい/)){
+                param_value = yyyymmdd.day_before_yesterday();
+            } else if (param_value.match(/昨日/)){
+                param_value = yyyymmdd.yesterday();
+            } else if (param_value.match(/今日/)){
+                param_value = yyyymmdd.today();
+            } else if (param_value.match(/明日/)){
+                param_value = yyyymmdd.tomorrow();
+            } else if (param_value.match(/明後日/) || param_value.match(/あさって/)){
+                param_value = yyyymmdd.day_after_tomorrow();
+            } else if (yyyymmdd.parse(param_value)){
+                param_value = param_value;
             } else {
                 // This is not suitable parameter for date.
                 return false;
             }
-        } else if (answer_key == "plate"){
-            if (answer_value === null || answer_value == ""){
+        } else if (param_key == "plate"){
+            if (param_value === null || param_value == ""){
                 return false;
             }
-            if (answer_value.match(/Plate A/) || answer_value.match(/PLATE A/) || answer_value.match(/plate a/) || answer_value.match(/プレートA/) || answer_value.match(/プレート A/) || answer_value.match(/プレート a/) || answer_value.match(/PLATE a/) || answer_value.match(/^[aA]$/) || answer_value.match(/^[aA].$/) || answer_value.match(/^[aA]。$/)){
-                answer_value = "a";
-            } else if (answer_value.match(/Plate B/) || answer_value.match(/PLATE B/) || answer_value.match(/plate b/) || answer_value.match(/プレートB/) || answer_value.match(/プレート B/) || answer_value.match(/プレート b/) || answer_value.match(/PLATE b/) || answer_value.match(/^[bB]$/) || answer_value.match(/^[bB].$/) || answer_value.match(/^[bB]。$/)){
-                answer_value = "b";
-            } else if (answer_value.match(/Plate 600/) || answer_value.match(/PLATE 600/) || answer_value.match(/plate 600/) || answer_value.match(/プレート600/) || answer_value.match(/プレート 600/) || answer_value.match(/PLATE600/) || answer_value.match(/^600$/) || answer_value.match(/^600。$/) || answer_value.match(/^600.$/) || answer_value.match(/p600/)){
-                answer_value = "p600";
-            } else if (answer_value.match(/[dD][oO][nN] [sS][eE][tT]/) || answer_value.match(/[dD][oO][nN]セット/) || answer_value.match(/[dD][oO][nN] セット/) || answer_value.match(/丼セット/) || answer_value.match(/丼 セット/) || answer_value.match(/丼[sS][eE][tT]/) || answer_value.match(/丼 [sS][eE][tT]/) || answer_value.match(/丼/) || answer_value.match(/[dD][oO][nN]/)){
-                answer_value = "don";
-            } else if (answer_value.match(/[nN][oO][oO][dD][lL][eE]/) || answer_value.match(/ヌードル/) || answer_value.match(/麺/)){
-                answer_value = "noodle";
-            } else if (answer_value.match(/[pP][aA][sS][tT][aA]/) || answer_value.match(/パスタ/) || answer_value.match(/スパゲッティ/) || answer_value.match(/スパゲッティー/)){
-                answer_value = "pasta";
+            if (param_value.match(/Plate A/) || param_value.match(/PLATE A/) || param_value.match(/plate a/) || param_value.match(/プレートA/) || param_value.match(/プレート A/) || param_value.match(/プレート a/) || param_value.match(/PLATE a/) || param_value.match(/^[aA]$/) || param_value.match(/^[aA].$/) || param_value.match(/^[aA]。$/)){
+                param_value = "a";
+            } else if (param_value.match(/Plate B/) || param_value.match(/PLATE B/) || param_value.match(/plate b/) || param_value.match(/プレートB/) || param_value.match(/プレート B/) || param_value.match(/プレート b/) || param_value.match(/PLATE b/) || param_value.match(/^[bB]$/) || param_value.match(/^[bB].$/) || param_value.match(/^[bB]。$/)){
+                param_value = "b";
+            } else if (param_value.match(/Plate 600/) || param_value.match(/PLATE 600/) || param_value.match(/plate 600/) || param_value.match(/プレート600/) || param_value.match(/プレート 600/) || param_value.match(/PLATE600/) || param_value.match(/^600$/) || param_value.match(/^600。$/) || param_value.match(/^600.$/) || param_value.match(/p600/)){
+                param_value = "p600";
+            } else if (param_value.match(/[dD][oO][nN] [sS][eE][tT]/) || param_value.match(/[dD][oO][nN]セット/) || param_value.match(/[dD][oO][nN] セット/) || param_value.match(/丼セット/) || param_value.match(/丼 セット/) || param_value.match(/丼[sS][eE][tT]/) || param_value.match(/丼 [sS][eE][tT]/) || param_value.match(/丼/) || param_value.match(/[dD][oO][nN]/)){
+                param_value = "don";
+            } else if (param_value.match(/[nN][oO][oO][dD][lL][eE]/) || param_value.match(/ヌードル/) || param_value.match(/麺/)){
+                param_value = "noodle";
+            } else if (param_value.match(/[pP][aA][sS][tT][aA]/) || param_value.match(/パスタ/) || param_value.match(/スパゲッティ/) || param_value.match(/スパゲッティー/)){
+                param_value = "pasta";
             } else {
                 // This is not suitable parameter for plate
                 return false;
@@ -109,13 +94,13 @@ module.exports = class ActionShowMenu {
             // This is unnecessary parameter so ignore this.
             return false;
         }
-        parameter[answer_key] = answer_value;
-        return parameter;
+        parsed_param[param_key] = param_value;
+        return parsed_param;
     }
 
-    finish(){
+    finish(line_event, conversation){
         let that = this;
-        return wfc.getMenu(that._conversation.confirmed.date).then(
+        return wfc.getMenu(conversation.confirmed.date).then(
             function(response){
                 let messages;
                 if (!response || response.length == 0){
@@ -131,18 +116,18 @@ module.exports = class ActionShowMenu {
                         type: "text",
                         text: ""
                     }];
-                    if (that._conversation.confirmed.plate){
+                    if (conversation.confirmed.plate){
                         // Reply specific menu.
                         for (let food of response){
-                            if (food.plate == that._conversation.confirmed.plate){
-                                messages[0].text = plate_mapping[that._conversation.confirmed.plate] + "は「" + food.menu + "」";
+                            if (food.plate == conversation.confirmed.plate){
+                                messages[0].text = that.plate_mapping[conversation.confirmed.plate] + "は「" + food.menu + "」";
                             }
                         }
                     } else {
                         // Reply all menus.
                         for (let food of response){
                             if (food.plate && food.menu){
-                                messages[0].text += plate_mapping[food.plate] + "は「" + food.menu + "」、\n";
+                                messages[0].text += that.plate_mapping[food.plate] + "は「" + food.menu + "」、\n";
                             }
                         }
                     }
@@ -154,7 +139,7 @@ module.exports = class ActionShowMenu {
                     }
                 }
 
-                return line.replyMessage(that._line_event.replyToken, messages);
+                return line.replyMessage(line_event.replyToken, messages);
             },
             function(response){
                 return Promise.reject("Failed to get today's menu.");

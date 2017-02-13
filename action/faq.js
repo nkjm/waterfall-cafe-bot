@@ -1,40 +1,28 @@
 'use strict';
 
 let Promise = require('bluebird');
-let memory = require('memory-cache');
 let striptags = require('striptags');
 let line = require('../line');
 let rightnow = require('../rightnow');
 
 module.exports = class ActionFaq {
 
-    constructor(conversation, line_event) {
-        this._conversation = conversation;
-        this._line_event = line_event;
-        this._required_parameter = {};
-
-        // Scan confirmed parameters and if missing required parameters found, we add them to to_confirm.
-        for (let req_param_key of Object.keys(this._required_parameter)){
-            if (!this._conversation.confirmed[req_param_key] && !this._conversation.to_confirm[req_param_key]){
-                this._conversation.to_confirm[req_param_key] = this._required_parameter[req_param_key];
-            }
-        }
-
-        console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
+    constructor() {
+        this.required_parameter = {};
     }
 
-    parse_parameter(answer){
+    parse_parameter(param){
     }
 
-    finish(){
+    finish(line_event, conversation){
         let that = this;
-        return rightnow.searchAnswer(that._line_event.message.text).then(
+        return rightnow.searchAnswer(line_event.message.text).then(
             function(response){
                 let messages;
                 if (!response || !response.solution){
                     messages = [{
                         type: "text",
-                        text: that._conversation.intent.fulfillment.speech
+                        text: conversation.intent.fulfillment.speech
                     }];
                 } else {
                     messages = [{
@@ -43,7 +31,7 @@ module.exports = class ActionFaq {
                     }];
                 }
 
-                return line.replyMessage(that._line_event.replyToken, messages);
+                return line.replyMessage(line_event.replyToken, messages);
             },
             function(response){
                 console.log("Failed to get answer from rightnow.");

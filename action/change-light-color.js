@@ -1,146 +1,129 @@
 'use strict';
 
-const memory_retention = Number(process.env.MEMORY_RETENTION);
-
-const color_mappings = [{
-    label: "白",
-    code: "ffffff"
-},{
-    label: "青",
-    code: "9AB7FF"
-},{
-    label: "ブルー",
-    code: "9AB7FF"
-},{
-    label: "赤",
-    code: "FF7B7B"
-},{
-    label: "レッド",
-    code: "FF7B7B"
-},{
-    label: "黄",
-    code: "FFFA6A"
-},{
-    label: "イエロー",
-    code: "FFFA6A"
-},{
-    label: "橙",
-    code: "FFA500"
-},{
-    label: "オレンジ",
-    code: "FFA500"
-},{
-    label: "ネイビー",
-    code: "000080"
-},{
-    label: "緑",
-    code: "A3FF7B"
-},{
-    label: "グリーン",
-    code: "A3FF7B"
-},{
-    label: "ピンク",
-    code: "FFBADD"
-},{
-    label: "桃",
-    code: "FFBADD"
-},{
-    label: "紫",
-    code: "E37BFF"
-},{
-    label: "パープル",
-    code: "E37BFF"
-},{
-    label: "栗",
-    code: "800000"
-},{
-    label: "茶",
-    code: "800000"
-},{
-    label: "ブラウン",
-    code: "800000"
-},{
-    label: "琥珀",
-    code: "bf783a"
-},{
-    label: "金",
-    code: "e6b422"
-},{
-    label: "銀",
-    code: "afafb0"
-}];
-
 let Promise = require('bluebird');
-let memory = require('memory-cache');
 let line = require('../line');
 let hue = require('../hue');
 
 module.exports = class ActionChangeLightColor {
 
-    constructor(conversation, line_event) {
-        this._conversation = conversation;
-        this._line_event = line_event;
-        this._required_parameter = {
+    constructor() {
+        this.required_parameter = {
             color: {
                 message_to_confirm: {
                     type: "text",
-                    text: "お任せを。何色にしますか？"
+                    text: "何色にしますか？"
                 }
             }
-        }
-
-        // Scan confirmed parameters and if missing required parameters found, we add them to to_confirm.
-        for (let req_param_key of Object.keys(this._required_parameter)){
-            if (!this._conversation.confirmed[req_param_key] && !this._conversation.to_confirm[req_param_key]){
-                this._conversation.to_confirm[req_param_key] = this._required_parameter[req_param_key];
-            }
-        }
-
-        console.log("We have " + Object.keys(this._conversation.to_confirm).length + " parameters to confirm.");
+        };
+        this.color_mappings = [{
+            label: "白",
+            code: "ffffff"
+        },{
+            label: "青",
+            code: "9AB7FF"
+        },{
+            label: "ブルー",
+            code: "9AB7FF"
+        },{
+            label: "赤",
+            code: "FF7B7B"
+        },{
+            label: "レッド",
+            code: "FF7B7B"
+        },{
+            label: "黄",
+            code: "FFFA6A"
+        },{
+            label: "イエロー",
+            code: "FFFA6A"
+        },{
+            label: "橙",
+            code: "FFA500"
+        },{
+            label: "オレンジ",
+            code: "FFA500"
+        },{
+            label: "ネイビー",
+            code: "000080"
+        },{
+            label: "緑",
+            code: "A3FF7B"
+        },{
+            label: "グリーン",
+            code: "A3FF7B"
+        },{
+            label: "ピンク",
+            code: "FFBADD"
+        },{
+            label: "桃",
+            code: "FFBADD"
+        },{
+            label: "紫",
+            code: "E37BFF"
+        },{
+            label: "パープル",
+            code: "E37BFF"
+        },{
+            label: "栗",
+            code: "800000"
+        },{
+            label: "茶",
+            code: "800000"
+        },{
+            label: "ブラウン",
+            code: "800000"
+        },{
+            label: "琥珀",
+            code: "bf783a"
+        },{
+            label: "金",
+            code: "e6b422"
+        },{
+            label: "銀",
+            code: "afafb0"
+        }];
     }
 
-    parse_parameter(answer){
-        let answer_key = Object.keys(answer)[0];
-        let answer_value = answer[Object.keys(answer)[0]];
-        let parameter = {};
+    parse_parameter(param){
+        let param_key = Object.keys(answer)[0];
+        let param_value = answer[Object.keys(answer)[0]];
+        let parsed_param = {};
 
         // Replace color name with color code.
-        if (answer_key == "color"){
-            if (answer_value === null || answer_value == ""){
+        if (param_key == "color"){
+            if (param_value === null || param_value == ""){
                 return false;
             }
             let found_color = false;
-            for (let color_mapping of color_mappings){
-                if (answer_value.replace("色", "") == color_mapping.label){
-                    answer_value = color_mapping.code;
+            for (let color_mapping of this.color_mappings){
+                if (param_value.replace("色", "") == color_mapping.label){
+                    param_value = color_mapping.code;
                     found_color = true;
                 }
             }
-            if (found_color){
-                console.log("Color identified.");
-                parameter[answer_key] = answer_value;
-            } else {
+            if (!found_color){
                 console.log("Unable to identify color.");
-                this._conversation.to_confirm[answer_key].message_to_confirm.text = "色が特定できませんでした。もう一度、端的に色だけ教えてもらえませんか？";
                 return false;
             }
+            console.log("Color identified.");
+            parsed_param[param_key] = param_value;
         } else {
             // This is unnecessary parameter so ignore this.
             return false;
         }
-        return parameter;
+        return parsed_param;
     }
 
-    finish(){
+    finish(line_event, conversation){
         let that = this;
-        return hue.change_color(that._conversation.confirmed.color).then(
+        return hue.change_color(conversation.confirmed.color).then(
             function(response){
                 let messages = [{
                     type: "text",
                     text: "了解しましたー。"
                 }];
 
-                return line.replyMessage(that._line_event.replyToken, messages);
+                return line.replyMessage(line_event.replyToken, messages);
             },
             function(response){
                 return Promise.reject("Failed to turn on light.");
