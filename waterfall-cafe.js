@@ -17,9 +17,14 @@ module.exports = class WaterfallCafe {
                 'Content-Type': 'application/json'
             };
             let url = API_BASE + '/user';
+            let body = {
+                user_id: user.userId,
+                display_name: user.displayName,
+                picture_url: user.pictureUrl
+            }
 
             // 認証用のセキュリティコードを生成
-            user.security_code = WaterfallCafe.randomStringAsBase64Url(40);
+            body.security_code = WaterfallCafe.randomStringAsBase64Url(40);
 
             request({
                 url: url,
