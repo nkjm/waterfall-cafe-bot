@@ -5,8 +5,8 @@
 */
 let Promise = require('bluebird');
 let flow_tool = require('./flow_tool');
-let wfc = require('../waterfall-cafe');
-let line = require('../line');
+let wfc = require('../service/waterfall-cafe');
+let line = require('../service/line');
 let yyyymmdd = require('../yyyymmdd');
 
 
