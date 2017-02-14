@@ -2,8 +2,8 @@
 
 let Promise = require('bluebird');
 let memory = require('memory-cache');
-let line = require('../line');
-let hue = require('../hue');
+let line = require('../service/line');
+let hue = require('../service/hue');
 
 module.exports = class ActionTurnOnLight {
 

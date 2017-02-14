@@ -2,8 +2,8 @@
 
 let Promise = require('bluebird');
 let striptags = require('striptags');
-let line = require('../line');
-let rightnow = require('../rightnow');
+let line = require('../service/line');
+let rightnow = require('../service/rightnow');
 
 module.exports = class ActionFaq {
 

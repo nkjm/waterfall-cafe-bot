@@ -47,31 +47,31 @@ module.exports = class FlowTool {
         switch (action_name) {
             case "show-menu":
                 action = new action_show_menu();
-                break;
+            break;
             case "show-calorie":
                 action = new action_show_calorie();
-                break;
+            break;
             case "play-music":
                 action = new action_play_music();
-                break;
+            break;
             case "turn-on-light":
                 action = new action_turn_on_light();
-                break;
+            break;
             case "turn-off-light":
                 action = new action_turn_off_light();
-                break;
+            break;
             case "change-light-color":
                 action = new action_change_light_color();
-                break;
+            break;
             case "request":
                 action = new action_request();
-                break;
+            break;
             case "clear-conversation":
                 action = new action_clear_conversation();
-                break;
+            break;
             default:
                 action = new action_faq();
-                break;
+            break;
         }
         return action;
     }

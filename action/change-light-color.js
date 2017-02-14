@@ -1,8 +1,8 @@
 'use strict';
 
 let Promise = require('bluebird');
-let line = require('../line');
-let hue = require('../hue');
+let line = require('../service/line');
+let hue = require('../service/hue');
 
 module.exports = class ActionChangeLightColor {
 

@@ -2,8 +2,8 @@
 
 let Promise = require('bluebird');
 let memory = require('memory-cache');
-let wfc = require('../waterfall-cafe');
-let line = require('../line');
+let wfc = require('../service/waterfall-cafe');
+let line = require('../service/line');
 let yyyymmdd = require('../yyyymmdd');
 
 module.exports = class ActionShowCalorie {
