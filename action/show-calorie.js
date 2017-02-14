@@ -1,7 +1,6 @@
 'use strict';
 
 let Promise = require('bluebird');
-let memory = require('memory-cache');
 let wfc = require('../service/waterfall-cafe');
 let line = require('../service/line');
 let yyyymmdd = require('../yyyymmdd');

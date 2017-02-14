@@ -1,7 +1,6 @@
 'use strict';
 
 let Promise = require('bluebird');
-let memory = require('memory-cache');
 let line = require('../service/line');
 let hue = require('../service/hue');
 

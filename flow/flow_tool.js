@@ -16,6 +16,7 @@ let action_change_light_color = require('../action/change-light-color');
 let action_faq = require('../action/faq');
 let action_request = require('../action/request');
 let action_clear_conversation = require('../action/clear-conversation');
+let action_greeting = require('../action/greeting');
 
 module.exports = class FlowTool {
     static identify_to_confirm_parameter(required_parameter, confirmed){
@@ -68,6 +69,9 @@ module.exports = class FlowTool {
             break;
             case "clear-conversation":
                 action = new action_clear_conversation();
+            break;
+            case "greeting":
+                action = new action_greeting();
             break;
             default:
                 action = new action_faq();
