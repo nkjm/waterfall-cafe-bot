@@ -183,7 +183,7 @@ router.post('/', function(req, res, next) {
                                 confirmed: null
                             }
                         }
-                        flow = new start_conversation_flow(line_event, conversation);
+                        flow = new another_start_conversation_flow(line_event, conversation);
                         return flow.run();
                     }
                 },
