@@ -5,9 +5,6 @@
 */
 let Promise = require('bluebird');
 let flow_tool = require('./flow_tool');
-let wfc = require('../service/waterfall-cafe');
-let line = require('../service/line');
-let yyyymmdd = require('../yyyymmdd');
 
 
 module.exports = class ChangeParameterFlow {

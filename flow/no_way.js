@@ -5,9 +5,6 @@
 */
 let Promise = require('bluebird');
 let flow_tool = require('./flow_tool');
-let wfc = require('../service/waterfall-cafe');
-let line = require('../service/line');
-let yyyymmdd = require('../yyyymmdd');
 
 
 module.exports = class AnotherStartConversationFlow {
@@ -19,7 +16,7 @@ module.exports = class AnotherStartConversationFlow {
     }
 
     run(){
-        console.log("\n### This is Another Start Conversation Flow. ###\n");
+        console.log("\n### This is No Way Flow. ###\n");
         let that = this;
 
         // "text message" is the only supported event.
@@ -40,22 +37,6 @@ module.exports = class AnotherStartConversationFlow {
         */
         that.action = flow_tool.instantiate_action(that.conversation.intent.action);
         that.conversation.to_confirm = flow_tool.identify_to_confirm_parameter(that.action.required_parameter, that.conversation.confirmed);
-
-
-        /*
-        ** If api.ai return some parameters. we save them in conversation object so that Bot can remember.
-        */
-        if (that.conversation.intent.parameters && Object.keys(that.conversation.intent.parameters).length > 0){
-            for (let param_key of Object.keys(that.conversation.intent.parameters)){
-                let parameter = {};
-                parameter[param_key] = that.conversation.intent.parameters[param_key];
-                parameter = that.action.parse_parameter(parameter);
-
-                if (parameter){
-                    flow_tool.add_parameter(that.conversation, parameter);
-                }
-            }
-        }
 
         /*
         ** Run the intent oriented action.

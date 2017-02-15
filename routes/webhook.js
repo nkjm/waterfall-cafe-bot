@@ -19,7 +19,7 @@ let start_conversation_flow = require('../flow/start_conversation');
 let reply_flow = require('../flow/reply');
 let change_intent_flow = require('../flow/change_intent');
 let change_parameter_flow = require('../flow/change_parameter');
-let another_start_conversation_flow = require('../flow/another_start_conversation');
+let no_way_flow = require('../flow/no_way');
 
 /*
 ** Middleware Configuration
@@ -44,6 +44,33 @@ router.post('/', function(req, res, next) {
 
     let line_event = req.body.events[0];
     console.log(line_event);
+
+    /*
+    ** ### Follow Event Handler
+    */
+    if (line_event.type == "follow"){
+        let main = line.getProfile(line_event.source.userId).then(
+            function(response){
+                let user = response;
+
+                // Upsert User.
+                return wfc.upsertUser(user);
+            },
+            function(response){
+                console.log("Failed to get LINE User Profile.");
+                return Promise.reject(response);
+            }
+        ).then(
+            function(response){
+                console.log("End of webhook process.");
+            },
+            function(response){
+                console.log("Failed to handle follow event.");
+                console.log(response);
+            }
+        )
+        return;
+    } // End of Follow Event Handler
 
     /*
     ** ### Flow Identification ###
@@ -145,7 +172,7 @@ router.post('/', function(req, res, next) {
                         }
 
                         /* ################################################
-                        ** ### This is Another Start Conversation Flow. ###
+                        ** ### This is No Way Flow. ###
                         ** ################################################
                         */
                         conversation = {
@@ -157,7 +184,7 @@ router.post('/', function(req, res, next) {
                                 confirmed: null
                             }
                         }
-                        flow = new another_start_conversation_flow(line_event, conversation);
+                        flow = new no_way_flow(line_event, conversation);
                         return flow.run();
                     }
                 },
