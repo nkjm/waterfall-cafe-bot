@@ -43,6 +43,7 @@ router.post('/', function(req, res, next) {
     console.log("Signature validation succeeded.");
 
     let line_event = req.body.events[0];
+    console.log(line_event);
 
     /*
     ** ### Follow Event Handler
