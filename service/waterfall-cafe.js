@@ -24,7 +24,7 @@ module.exports = class WaterfallCafe {
             }
             let new_user = body;
 
-            // 認証用のセキュリティコードを生成
+            // Generate Security code for authentication
             body.security_code = WaterfallCafe.randomStringAsBase64Url(40);
 
             request({

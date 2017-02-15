@@ -22,8 +22,8 @@ module.exports = class StartConversationFlow {
         console.log("\n### This is Start Conversation Flow. ###\n");
         let that = this;
 
-        // "message" is the only supported event on starting conversation.
-        if (that.line_event.type != "message"){
+        // "text message" is the only supported event on starting conversation.
+        if (that.line_event.type != "message" || that.line_event.message.type != "text"){
             console.log("Not supported event type in this flow.");
             return new Promise(function(resolve, reject){
                 resolve();

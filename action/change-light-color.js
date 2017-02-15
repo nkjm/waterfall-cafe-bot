@@ -20,10 +20,10 @@ module.exports = class ActionChangeLightColor {
             code: "ffffff"
         },{
             label: "青",
-            code: "9AB7FF"
+            code: "5068FF"
         },{
             label: "ブルー",
-            code: "9AB7FF"
+            code: "5068FF"
         },{
             label: "赤",
             code: "FF7B7B"
@@ -72,6 +72,9 @@ module.exports = class ActionChangeLightColor {
         },{
             label: "ブラウン",
             code: "800000"
+        },{
+            label: "水",
+            code: "94CDFF"
         },{
             label: "琥珀",
             code: "bf783a"

@@ -24,7 +24,7 @@ module.exports = class ReplyFlow {
         /*
         ** Supported event type is "message" and "postback". Otherwise, the event is ignored.
         */
-        if (that.line_event.type != "message" && that.line_event.type != "postback"){
+        if ((that.line_event.type != "message" || that.line_event.message.type != "text") && that.line_event.type != "postback"){
             console.log("Not supported event type in this flow.");
             return new Promise(function(resolve, reject){
                 resolve();
