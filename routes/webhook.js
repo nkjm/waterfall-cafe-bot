@@ -43,34 +43,7 @@ router.post('/', function(req, res, next) {
     console.log("Signature validation succeeded.");
 
     let line_event = req.body.events[0];
-    console.log(line_event);
-
-    /*
-    ** ### Follow Event Handler
-    */
-    if (line_event.type == "follow"){
-        let main = line.getProfile(line_event.source.userId).then(
-            function(response){
-                let user = response;
-
-                // Upsert User.
-                return wfc.upsertUser(user);
-            },
-            function(response){
-                console.log("Failed to get LINE User Profile.");
-                return Promise.reject(response);
-            }
-        ).then(
-            function(response){
-                console.log("End of webhook process.");
-            },
-            function(response){
-                console.log("Failed to handle follow event.");
-                console.log(response);
-            }
-        )
-        return;
-    } // End of Follow Event Handler
+    //console.log(line_event);
 
     /*
     ** ### Flow Identification ###
@@ -199,14 +172,14 @@ router.post('/', function(req, res, next) {
     promise_flow_completed.then(
         function(response){
             console.log("End of webhook process.");
-            console.log(flow.conversation);
+            //console.log(flow.conversation);
 
             // Update memory.
             memory.put(line_event.source.userId, flow.conversation, memory_retention);
         },
         function(response){
             console.log("Failed to process event.");
-            console.log(response);
+            //console.log(response);
 
             // Clear memory.
             memory.put(line_event.source.userId, null);
