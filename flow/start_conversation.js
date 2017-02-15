@@ -23,7 +23,7 @@ module.exports = class StartConversationFlow {
         let that = this;
 
         // "text message" is the only supported event.
-        if (line_event.type == "message" && line_event.message.type == "text"){
+        if (that.line_event.type == "message" && that.line_event.message.type == "text"){
             console.log("This is supported event type in this flow.");
         } else {
             console.log("This is unsupported event type in this flow.");
