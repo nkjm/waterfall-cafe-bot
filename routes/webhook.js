@@ -45,12 +45,14 @@ router.post('/', function(req, res, next) {
     let line_event = req.body.events[0];
     console.log(line_event);
 
+    /*
     if ((line_event.type == "message" && line_event.message.type == "text") || line_event.type == "postback" || line_event.type == "follow"){
         console.log("This is acceptable event.");
     } else {
         console.log("This is unacceptable event.");
         return;
     }
+    */
 
     /*
     ** ### Follow Event Handler
@@ -128,7 +130,7 @@ router.post('/', function(req, res, next) {
             promise_flow_completed = flow.run();
         } else {
             let text;
-            if (line_event.type == "message"){
+            if (line_event.type == "message" && line_event.message.type == "text"){
                 text = line_event.message.text;
             } else if (line_event.type == "postback"){
                 text = line_event.postback.data;

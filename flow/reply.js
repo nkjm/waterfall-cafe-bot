@@ -21,11 +21,11 @@ module.exports = class ReplyFlow {
         console.log("\n### This is Reply Flow. ###\n");
         let that = this;
 
-        /*
-        ** Supported event type is "message" and "postback". Otherwise, the event is ignored.
-        */
-        if ((that.line_event.type != "message" || that.line_event.message.type != "text") && that.line_event.type != "postback"){
-            console.log("Not supported event type in this flow.");
+        // "text message" and "postback" are the supported event.
+        if ((line_event.type == "message" && line_event.message.type == "text") || line_event.type == "postback" ){
+            console.log("This is supported event type in this flow.");
+        } else {
+            console.log("This is unsupported event type in this flow.");
             return new Promise(function(resolve, reject){
                 resolve();
             });

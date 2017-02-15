@@ -22,9 +22,11 @@ module.exports = class ChangeParameterFlow {
         console.log("\n### This is Change Parameter Flow. ###\n");
         let that = this;
 
-        // "message" is the only supported event on starting conversation.
-        if ((that.line_event.type != "message" || that.line_event.message.type != "text") && that.line_event.type != "postback"){
-            console.log("Not supported event type in this flow.");
+        // "text message" and "postback" are the supported event.
+        if ((line_event.type == "message" && line_event.message.type == "text") || line_event.type == "postback" ){
+            console.log("This is supported event type in this flow.");
+        } else {
+            console.log("This is unsupported event type in this flow.");
             return new Promise(function(resolve, reject){
                 resolve();
             });

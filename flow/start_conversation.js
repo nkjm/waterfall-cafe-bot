@@ -22,9 +22,11 @@ module.exports = class StartConversationFlow {
         console.log("\n### This is Start Conversation Flow. ###\n");
         let that = this;
 
-        // "text message" is the only supported event on starting conversation.
-        if (that.line_event.type != "message" || that.line_event.message.type != "text"){
-            console.log("Not supported event type in this flow.");
+        // "text message" is the only supported event.
+        if (line_event.type == "message" && line_event.message.type == "text"){
+            console.log("This is supported event type in this flow.");
+        } else {
+            console.log("This is unsupported event type in this flow.");
             return new Promise(function(resolve, reject){
                 resolve();
             });
