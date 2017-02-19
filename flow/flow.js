@@ -93,7 +93,7 @@ module.exports = class Flow {
         this.conversation.confirming = Object.keys(this.conversation.to_confirm)[0];
 
         // Send question to the user.
-        return line.replyMessage(this.line_event.reply_token, messages);
+        return line.replyMessage(this.line_event.replyToken, messages);
     }
 
     static identify_intent(session_id, text){
