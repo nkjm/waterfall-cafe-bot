@@ -174,7 +174,7 @@ router.post('/', (req, res, next) => {
                                         ** ################################################
                                         */
                                         conversation = {
-                                            intent: "input.unknown",
+                                            intent: {action:"input.unknown"},
                                             confirmed: {},
                                             to_confirm: {},
                                             confirming: null,
@@ -194,7 +194,7 @@ router.post('/', (req, res, next) => {
                         ** ################################################
                         */
                         conversation = {
-                            intent: "input.unknown",
+                            intent: {action:"input.unknown"},
                             confirmed: {},
                             to_confirm: {},
                             confirming: null,

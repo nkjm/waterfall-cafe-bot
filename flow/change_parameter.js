@@ -20,7 +20,7 @@ module.exports = class ChangeParameterFlow extends Flow {
     }
 
     run(){
-        console.log("\n### This is Change Parameter Flow. ###\n");
+        console.log("\n### ASSUME This is Change Parameter Flow. ###\n");
 
         // Check if the event is supported one in this flow.
         if ((this.line_event.type == "message" && this.line_event.message.type == "text") || this.line_event.type == "postback" ){
@@ -45,11 +45,11 @@ module.exports = class ChangeParameterFlow extends Flow {
 
             if (parameter){
                 // Now, this is for sure Change Parameter Flow.
-                console.log("This is for sure Change Parameter Flow.");
+                console.log("\n### This is for sure Change Parameter Flow. ###\n");
                 super.add_parameter(parameter);
             } else {
                 // It turned out this is not Change Parameter Flow.
-                console.log("It turned out this is not Change Parameter Flow.");
+                console.log("\n### It turned out this is not Change Parameter Flow. ###\n");
                 return Promise.reject("failed_to_parse_parameter");
             }
         }

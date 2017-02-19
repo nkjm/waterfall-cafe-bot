@@ -62,7 +62,6 @@ module.exports = class Line {
                 replyToken: replyToken,
                 messages: messages
             }
-            console.log(body);
             let url = 'https://api.line.me/v2/bot/message/reply';
             request({
                 url: url,
