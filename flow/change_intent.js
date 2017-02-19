@@ -4,57 +4,50 @@
 ** Import Packages
 */
 let Promise = require('bluebird');
-let flow_tool = require('./flow_tool');
+let Flow = require("./flow");
 
 
-module.exports = class ChangeIntentFlow {
+module.exports = class ChangeIntentFlow extends Flow {
+    /*
+    ** ### Change Intent Flow ###
+    ** - Check if the event is supported one in this flow.
+    ** - If we find some parameters from message, add them to the conversation.
+    ** - Run final action.
+    */
 
     constructor(line_event, conversation) {
-        this.line_event = line_event;
-        this.conversation = conversation;
-        this.action = null;
+        super(line_event, conversation);
     }
 
     run(){
         console.log("\n### This is Change Intent Flow. ###\n");
-        let that = this;
 
-        // "text message" is the only supported event.
-        if (that.line_event.type == "message" && that.line_event.message.type == "text"){
+        // Check if the event is supported one in this flow.
+        if (this.line_event.type == "message" && this.line_event.message.type == "text"){
             console.log("This is supported event type in this flow.");
         } else {
             console.log("This is unsupported event type in this flow.");
-            return new Promise(function(resolve, reject){
+            return new Promise((resolve, reject) => {
                 resolve();
             });
         }
 
-        /*
-        ** Instantiate action depending on the intent.
-        ** The implementations of each action are located under /action directory.
-        */
-        that.action = flow_tool.instantiate_action(that.conversation.intent.action);
-        that.conversation.to_confirm = flow_tool.identify_to_confirm_parameter(that.action.required_parameter, that.conversation.confirmed);
-
-        /*
-        ** If api.ai return some parameters. we save them in conversation object so that Bot can remember.
-        */
-        if (that.conversation.intent.parameters && Object.keys(that.conversation.intent.parameters).length > 0){
-            for (let param_key of Object.keys(that.conversation.intent.parameters)){
+        // If we find some parameters from message, add them to the conversation.
+        if (this.conversation.intent.parameters && Object.keys(this.conversation.intent.parameters).length > 0){
+            for (let param_key of Object.keys(this.conversation.intent.parameters)){
                 let parameter = {};
-                parameter[param_key] = that.conversation.intent.parameters[param_key];
-                parameter = that.action.parse_parameter(parameter);
+                parameter[param_key] = this.conversation.intent.parameters[param_key];
+
+                // Parse parameters using skill specific parsing logic.
+                parameter = this.skill.parse_parameter(parameter);
 
                 if (parameter){
-                    flow_tool.add_parameter(that.conversation, parameter);
+                    super.add_parameter(parameter);
                 }
             }
         }
 
-        /*
-        ** Run the intent oriented action.
-        ** This may lead collection of another parameter or final action for this intent.
-        */
-        return flow_tool.run(that.action, that.line_event, that.conversation);
+        // Run final action.
+        return super.finish();
     } // End of run()
 };

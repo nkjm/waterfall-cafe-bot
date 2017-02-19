@@ -14,7 +14,7 @@ let Promise = require('bluebird');
 let memory = require('memory-cache');
 let line = require('../service/line');
 let wfc = require('../service/waterfall-cafe');
-let flow_tool = require('../flow/flow_tool');
+let flow_tool = require('../flow/flow');
 let start_conversation_flow = require('../flow/start_conversation');
 let reply_flow = require('../flow/reply');
 let change_intent_flow = require('../flow/change_intent');
@@ -30,7 +30,7 @@ Promise.config({
 });
 
 
-router.post('/', function(req, res, next) {
+router.post('/', (req, res, next) => {
     res.status(200).end();
 
     /*
@@ -50,21 +50,21 @@ router.post('/', function(req, res, next) {
     */
     if (line_event.type == "follow"){
         let main = line.getProfile(line_event.source.userId).then(
-            function(response){
+            (response) => {
                 let user = response;
 
                 // Upsert User.
                 return wfc.upsertUser(user);
             },
-            function(response){
+            (response) => {
                 console.log("Failed to get LINE User Profile.");
                 return Promise.reject(response);
             }
         ).then(
-            function(response){
+            (response) => {
                 console.log("End of webhook process.");
             },
-            function(response){
+            (response) => {
                 console.log("Failed to handle follow event.");
                 console.log(response);
             }
@@ -92,30 +92,41 @@ router.post('/', function(req, res, next) {
         /* ##########################################
         ** ### This is "Start Conversation" Flow. ###
         ** ##########################################
-        ** It seems this is a BRAND NEW CONVERSATION.
-        ** To beigin with, we will try to identify user's intent.
-        ** If some parameters are set, we save them.
-        ** And then we run the process depending on each intents.
         */
-        // Instantiate the conversation object. This will be saved as Bot Memory.
-        conversation = {
-            intent: null,
-            confirmed: {},
-            to_confirm: {},
-            confirming: null,
-            previous: {
-                confirmed: null
+
+        // Check if the event is supported one in this flow.
+        if (line_event.type == "message" && line_event.message.type == "text"){
+            console.log("This is supported event type in this flow.");
+        } else {
+            console.log("This is unsupported event type in this flow.");
+            return;
+        }
+
+        promise_flow_completed = flow_tool.identify_intent(line_event.source.userId, line_event.message.text).then(
+            (response) => {
+                // Instantiate the conversation object. This will be saved as Bot Memory.
+                conversation = {
+                    intent: response.result,
+                    confirmed: {},
+                    to_confirm: {},
+                    confirming: null,
+                    previous: {
+                        confirmed: null
+                    }
+                };
+                flow = new start_conversation_flow(line_event, conversation);
+                return flow.run();
+            },
+            (response) => {
+                console.log("Failed to identify intent.");
+                return Promise.reject(response);
             }
-        };
-        flow = new start_conversation_flow(line_event, conversation);
-        promise_flow_completed = flow.run()
+        );
     } else {
         if (conversation.confirming){
             /* #############################
             ** ### This is "Reply" Flow. ###
             ** #############################
-            ** It seems this event is related to the existing conversation.
-            ** We assume this event is the reply to fill out the parameter.
             */
             flow = new reply_flow(line_event, conversation);
             promise_flow_completed = flow.run();
@@ -131,16 +142,13 @@ router.post('/', function(req, res, next) {
             }
 
             promise_flow_completed = flow_tool.identify_intent(line_event.source.userId, text).then(
-                function(response){
+                (response) => {
                     console.log("Intent is " + response.result.action);
 
                     if (response.result.action != "input.unknown"){
                         /* #####################################
                         ** ### This is "Change Intent" Flow. ###
                         ** #####################################
-                        ** This is almost new conversation but user may be still conscious of some parameters.
-                        ** So we keep existing parameters while changeing the intent.
-                        ** While the name of the flow is "CHANGE Intent", there is a possiblity that intent is same as previous event.
                         */
 
                         // Set new intent while keeping other data.
@@ -149,26 +157,36 @@ router.post('/', function(req, res, next) {
                         flow = new change_intent_flow(line_event, conversation);
                         return flow.run();
                     } else {
-                        // Check if this is Change Parameter Flow.
                         if (conversation.previous.confirmed){
-                            let parameter = {};
-                            if (line_event.type == "message"){
-                                parameter[conversation.previous.confirmed] = line_event.message.text;
-                            } else if (line_event.type == "postback"){
-                                parameter[conversation.previous.confirmed] = line_event.postback.data;
-                            }
-                            if (parameter !== {}){
-                                let action = flow_tool.instantiate_action(conversation.intent.action);
-                                parameter = action.parse_parameter(parameter);
-                                if (parameter){
-                                    /* ########################################
-                                    ** ### This is "Change Parameter" Flow. ###
-                                    ** ########################################
-                                    */
-                                    flow = new change_parameter_flow(line_event, conversation);
-                                    return flow.run();
+                            /* ###############################################
+                            ** ### ASSUME this is "Change Parameter" Flow. ###
+                            ** ###############################################
+                            */
+                            flow = new change_parameter_flow(line_event, conversation);
+                            return flow.run().then(
+                                (response) => {
+                                    return response;
+                                },
+                                (response) => {
+                                    if (response == "failed_to_parse_parameter"){
+                                        /* ################################################
+                                        ** ### This is No Way Flow. ###
+                                        ** ################################################
+                                        */
+                                        conversation = {
+                                            intent: "input.unknown",
+                                            confirmed: {},
+                                            to_confirm: {},
+                                            confirming: null,
+                                            previous: {
+                                                confirmed: null
+                                            }
+                                        }
+                                        flow = new no_way_flow(line_event, conversation);
+                                        return flow.run();
+                                    }
                                 }
-                            }
+                            );
                         }
 
                         /* ################################################
@@ -176,7 +194,7 @@ router.post('/', function(req, res, next) {
                         ** ################################################
                         */
                         conversation = {
-                            intent: response.result,
+                            intent: "input.unknown",
                             confirmed: {},
                             to_confirm: {},
                             confirming: null,
@@ -188,7 +206,7 @@ router.post('/', function(req, res, next) {
                         return flow.run();
                     }
                 },
-                function(response){
+                (response) => {
                     console.log("Failed to identify intent.");
                     return Promise.reject(response);
                 }
@@ -197,14 +215,14 @@ router.post('/', function(req, res, next) {
     }
 
     promise_flow_completed.then(
-        function(response){
+        (response) => {
             console.log("End of webhook process.");
             //console.log(flow.conversation);
 
             // Update memory.
             memory.put(line_event.source.userId, flow.conversation, memory_retention);
         },
-        function(response){
+        (response) => {
             console.log("Failed to process event.");
             //console.log(response);
 

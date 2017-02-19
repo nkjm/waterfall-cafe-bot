@@ -4,59 +4,57 @@
 ** Import Packages
 */
 let Promise = require('bluebird');
-let flow_tool = require('./flow_tool');
+let Flow = require("./flow");
 
 
-module.exports = class ChangeParameterFlow {
+module.exports = class ChangeParameterFlow extends Flow {
+    /*
+    ** ### Change Parameter Flow ###
+    ** - Check if the event is supported one in this flow.
+    ** - Add Parameter from message text or postback data.
+    ** - Run final action.
+    */
 
     constructor(line_event, conversation) {
-        this.line_event = line_event;
-        this.conversation = conversation;
-        this.action = null;
+        super(line_event, conversation);
     }
 
     run(){
         console.log("\n### This is Change Parameter Flow. ###\n");
-        let that = this;
 
-        // "text message" and "postback" are the supported event.
-        if ((that.line_event.type == "message" && that.line_event.message.type == "text") || that.line_event.type == "postback" ){
+        // Check if the event is supported one in this flow.
+        if ((this.line_event.type == "message" && this.line_event.message.type == "text") || this.line_event.type == "postback" ){
             console.log("This is supported event type in this flow.");
         } else {
             console.log("This is unsupported event type in this flow.");
-            return new Promise(function(resolve, reject){
+            return new Promise((resolve, reject) => {
                 resolve();
             });
         }
 
-        /*
-        ** Instantiate action depending on the intent.
-        ** The implementations of each action are located under /action directory.
-        */
-        that.action = flow_tool.instantiate_action(that.conversation.intent.action);
-        that.conversation.to_confirm = flow_tool.identify_to_confirm_parameter(that.action.required_parameter, that.conversation.confirmed);
-
-        /*
-        ** If api.ai return some parameters. we save them in conversation object so that Bot can remember.
-        */
+        // Add Parameter from message text or postback data.
         let parameter = {};
-        if (that.line_event.type == "message"){
-            parameter[that.conversation.previous.confirmed] = that.line_event.message.text;
-        } else if (that.line_event.type == "postback"){
-            parameter[that.conversation.previous.confirmed] = that.line_event.postback.data;
+        if (this.line_event.type == "message"){
+            parameter[this.conversation.previous.confirmed] = this.line_event.message.text;
+        } else if (this.line_event.type == "postback"){
+            parameter[this.conversation.previous.confirmed] = this.line_event.postback.data;
         }
         if (parameter !== {}){
-            that.action = flow_tool.instantiate_action(that.conversation.intent.action);
-            parameter = that.action.parse_parameter(parameter);
+            // Parse parameters using skill specific parsing logic.
+            parameter = this.skill.parse_parameter(parameter);
+
             if (parameter){
-                flow_tool.add_parameter(that.conversation, parameter);
+                // Now, this is for sure Change Parameter Flow.
+                console.log("This is for sure Change Parameter Flow.");
+                super.add_parameter(parameter);
+            } else {
+                // It turned out this is not Change Parameter Flow.
+                console.log("It turned out this is not Change Parameter Flow.");
+                return Promise.reject("failed_to_parse_parameter");
             }
         }
 
-        /*
-        ** Run the intent oriented action.
-        ** This may lead collection of another parameter or final action for this intent.
-        */
-        return flow_tool.run(that.action, that.line_event, that.conversation);
+        // Run final action.
+        return super.finish();
     } // End of run()
 };
