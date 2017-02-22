@@ -240,7 +240,7 @@ router.post('/', (req, res, next) => {
     promise_flow_completed.then(
         (response) => {
             console.log("End of webhook process.");
-            //console.log(flow.conversation);
+            console.log(flow.conversation);
 
             // Update memory.
             memory.put(line_event.source.userId, flow.conversation, memory_retention);
