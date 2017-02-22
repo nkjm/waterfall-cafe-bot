@@ -98,8 +98,8 @@ module.exports = class Flow {
         if (this.skill.required_parameter[key]){
             if (!!this.skill.required_parameter[key].parse){
                 parsed_value = this.skill.required_parameter[key].parse(value);
-            } else if (!!this.skill.["parse_" + key]){
-                parsed_value = this.skill.["parse_" + key](value);
+            } else if (!!this.skill["parse_" + key]){
+                parsed_value = this.skill["parse_" + key](value);
             } else {
                 throw("Parse method not found.");
             }
@@ -107,7 +107,7 @@ module.exports = class Flow {
             if (!!this.skill.optional_parameter[key].parse){
                 parsed_value = this.skill.optional_parameter[key].parse(value);
             } else if (!!this.skill["parse_" + key]){
-                parsed_value = this.skill.["parse_" + key](value);
+                parsed_value = this.skill["parse_" + key](value);
             } else {
                 throw("Parse method not found.");
             }
