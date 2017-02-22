@@ -247,7 +247,7 @@ router.post('/', (req, res, next) => {
         },
         (response) => {
             console.log("Failed to process event.");
-            //console.log(response);
+            console.log(response;)
 
             // Clear memory.
             memory.put(line_event.source.userId, null);
