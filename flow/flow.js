@@ -50,7 +50,7 @@ module.exports = class Flow {
         let to_confirm = {};
 
         // If there is no required_parameter, we just return empty object as confirmed.
-        if (required_parameter){
+        if (!required_parameter){
             return to_confirm;
         }
 
