@@ -87,48 +87,37 @@ module.exports = class ActionChangeLightColor {
         }];
     }
 
-    parse_parameter(param){
-        let param_key = Object.keys(param)[0];
-        let param_value = param[Object.keys(param)[0]];
-        let parsed_param = {};
-
+    parse_color(value){
         // Replace color name with color code.
-        if (param_key == "color"){
-            if (param_value === null || param_value == ""){
-                return false;
-            }
-            let found_color = false;
-            for (let color_mapping of this.color_mappings){
-                if (param_value.replace("色", "") == color_mapping.label){
-                    param_value = color_mapping.code;
-                    found_color = true;
-                }
-            }
-            if (!found_color){
-                console.log("Unable to identify color.");
-                return false;
-            }
-            console.log("Color identified.");
-            parsed_param[param_key] = param_value;
-        } else {
-            // This is unnecessary parameter so ignore this.
-            return false;
+        if (value === null || value == ""){
+            throw("Value is emppty.");
         }
-        return parsed_param;
+
+        let parsed_value = {};
+
+        let found_color = false;
+        for (let color_mapping of this.color_mappings){
+            if (value.replace("色", "") == color_mapping.label){
+                parsed_value = color_mapping.code;
+                found_color = true;
+            }
+        }
+        if (!found_color){
+            throw(`Unable to identify color: ${value}.`);
+        }
+        return parsed_value;
     }
 
     finish(line_event, conversation){
-        let that = this;
         return hue.change_color(conversation.confirmed.color).then(
-            function(response){
+            (response) => {
                 let messages = [{
                     type: "text",
                     text: "了解しましたー。"
                 }];
-
                 return line.replyMessage(line_event.replyToken, messages);
             },
-            function(response){
+            (response) => {
                 return Promise.reject("Failed to turn on light.");
             }
         );

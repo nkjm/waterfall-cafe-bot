@@ -17,7 +17,7 @@ let route_webhook = require('./routes/webhook');
 let app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json({
-    verify: function(req, res, buf, encoding) {
+    verify: (req, res, buf, encoding) => {
         req.rawBody = buf;
     }
 }));

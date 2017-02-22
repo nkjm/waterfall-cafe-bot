@@ -33,25 +33,19 @@ module.exports = class ChangeParameterFlow extends Flow {
         }
 
         // Add Parameter from message text or postback data.
-        let parameter = {};
+        let param_value;
         if (this.line_event.type == "message"){
-            parameter[this.conversation.previous.confirmed] = this.line_event.message.text;
+            param_value = this.line_event.message.text;
         } else if (this.line_event.type == "postback"){
-            parameter[this.conversation.previous.confirmed] = this.line_event.postback.data;
+            param_value = this.line_event.postback.data;
         }
-        if (parameter !== {}){
-            // Parse parameters using skill specific parsing logic.
-            parameter = this.skill.parse_parameter(parameter);
-
-            if (parameter){
-                // Now, this is for sure Change Parameter Flow.
-                console.log("\n### This is for sure Change Parameter Flow. ###\n");
-                super.add_parameter(parameter);
-            } else {
-                // It turned out this is not Change Parameter Flow.
-                console.log("\n### It turned out this is not Change Parameter Flow. ###\n");
-                return Promise.reject("failed_to_parse_parameter");
-            }
+        try {
+            super.add_parameter(this.conversation.previous.confirmed, param_value);
+            console.log("\n### This is for sure Change Parameter Flow. ###\n");
+        } catch(err){
+            // It turned out this is not Change Parameter Flow.
+            console.log("\n### It turned out this is not Change Parameter Flow. ###\n");
+            return Promise.reject(err);
         }
 
         // Run final action.

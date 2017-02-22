@@ -7,15 +7,11 @@ let hue = require('../service/hue');
 module.exports = class ActionTurnOnLight {
 
     constructor() {
-        this.required_parameter = {}
-    }
-
-    parse_parameter(param){
     }
 
     finish(line_event, conversation){
         return hue.turn_on().then(
-            function(response){
+            (response) => {
                 let messages = [{
                     type: "text",
                     text: "了解しましたー。"
@@ -23,7 +19,7 @@ module.exports = class ActionTurnOnLight {
 
                 return line.replyMessage(line_event.replyToken, messages);
             },
-            function(response){
+            (response) => {
                 return Promise.reject("Failed to turn on light.");
             }
         );

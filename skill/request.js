@@ -16,14 +16,8 @@ module.exports = class ActionRequest {
         }
     }
 
-    parse_parameter(param){
-        let param_key = Object.keys(param)[0];
-
-        // Manipulate the answer if required.
-        if (param_key != "content"){
-            return false;
-        }
-        return param;
+    parse_content(value){
+        return value;
     }
 
     finish(line_event, conversation){

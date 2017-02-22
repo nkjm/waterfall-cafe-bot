@@ -34,19 +34,15 @@ module.exports = class ReplyFlow extends Flow {
         }
 
         // Add Parameter from message text or postback data.
-        let parameter = {};
+        let param_value;
         if (this.line_event.type == "message"){
-            parameter[this.conversation.confirming] = this.line_event.message.text;
+            param_value = this.line_event.message.text;
         } else if (this.line_event.type == "postback"){
-            parameter[this.conversation.confirming] = this.line_event.postback.data;
+            param_value = this.line_event.postback.data;
         }
-        if (parameter !== {}){
-            // Parse parameters using skill specific parsing logic.
-            parameter = this.skill.parse_parameter(parameter);
-
-            if (parameter){
-                super.add_parameter(parameter);
-            }
+        try {
+            super.add_parameter(this.conversation.confirming, param_value);
+        } catch(err){
         }
 
         // Run final action.

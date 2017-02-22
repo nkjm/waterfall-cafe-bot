@@ -14,8 +14,12 @@ module.exports = class Flow {
         this.line_event = line_event;
         this.conversation = conversation;
         this.skill = this._instantiate_skill(this.conversation.intent.action);
-        console.log(`This skill requires ${Object.keys(this.skill.required_parameter).length} parameters.`);
 
+        if (!!this.skill.required_parameter && typeof this.skill.required_parameter == "object"){
+            console.log(`This skill requires ${Object.keys(this.skill.required_parameter).length} parameters.`);
+        } else {
+            console.log(`This skill requires 0 parameters.`);
+        }
         this.conversation.to_confirm = this._identify_to_confirm_parameter(this.skill.required_parameter, this.conversation.confirmed);
 
         console.log(`We have ${Object.keys(this.conversation.to_confirm).length} parameters to confirm.`);
@@ -44,6 +48,12 @@ module.exports = class Flow {
 
     _identify_to_confirm_parameter(required_parameter, confirmed){
         let to_confirm = {};
+
+        // If there is no required_parameter, we just return empty object as confirmed.
+        if (required_parameter){
+            return to_confirm;
+        }
+
         // Scan confirmed parameters and if missing required parameters found, we add them to to_confirm.
         for (let req_param_key of Object.keys(required_parameter)){
             if (!confirmed[req_param_key]){
@@ -79,22 +89,49 @@ module.exports = class Flow {
         return promise_got_intent;
     }
 
-    add_parameter(parameter){
-        console.log("Adding parameter {" + Object.keys(parameter)[0] + ":'" + parameter[Object.keys(parameter)[0]] + "'}");
+    add_parameter(key, value){
+        console.log(`Parsing parameter {${key}: "${value}"}`);
+
+        let parsed_param;
+
+        // Parse the value. If the value is not suitable for this key, exception will be thrown.
+        if (this.skill.required_parameter[key]){
+            if (!!this.skill.required_parameter[key].parse){
+                parsed_param = this.skill.required_parameter[key].parse(value);
+            } else if (!!this.skill.required_parameter[key]["parse_" + key]){
+                parsed_param = this.skill.required_parameter[key]["parse_" + key](value);
+            } else {
+                throw("Parse method not found.");
+            }
+        } else if (this.skill.optional_parameter[key]){
+            if (!!this.skill.optional_parameter[key].parse){
+                parsed_param = this.skill.optional_parameter[key].parse(value);
+            } else if (!!this.skill.optional_parameter[key]["parse_" + key]){
+                parsed_param = this.skill.optional_parameter[key]["parse_" + key](value);
+            } else {
+                throw("Parse method not found.");
+            }
+        } else {
+            // This is not the parameter we care about. So skip it.
+            console.log("This is not the parameter we care about.");
+            throw("This is not the parameter we care about.");
+        }
+
+        console.log(`Adding parameter {${key}: "${parsed_param}"}`);
 
         // Add the parameter to "confirmed".
-        Object.assign(this.conversation.confirmed, parameter);
+        Object.assign(this.conversation.confirmed, {key: parsed_param});
 
         // At the same time, save the parameter key as "previously confirmed" thing.
-        this.conversation.previous.confirmed = Object.keys(parameter)[0];
+        this.conversation.previous.confirmed = key;
 
         // Remove item from to_confirm.
-        if (this.conversation.to_confirm[Object.keys(parameter)[0]]){
-            delete this.conversation.to_confirm[Object.keys(parameter)[0]];
+        if (this.conversation.to_confirm[key]){
+            delete this.conversation.to_confirm[key];
         }
 
         // Clear confirming.
-        if (this.conversation.confirming == Object.keys(parameter)[0]){
+        if (this.conversation.confirming == key){
             this.conversation.confirming = null;
         }
 
