@@ -114,7 +114,11 @@ router.post('/', (req, res, next) => {
                         confirmed: null
                     }
                 };
-                flow = new start_conversation_flow(line_event, conversation);
+                try {
+                    flow = new start_conversation_flow(line_event, conversation);
+                } catch(err) {
+                    return Promise.reject(err);
+                }
                 return flow.run();
             },
             (response) => {
@@ -128,7 +132,11 @@ router.post('/', (req, res, next) => {
             ** ### This is "Reply" Flow. ###
             ** #############################
             */
-            flow = new reply_flow(line_event, conversation);
+            try {
+                flow = new reply_flow(line_event, conversation);
+            } catch(err){
+                return Promise.reject(err);
+            }
             promise_flow_completed = flow.run();
         } else {
             let text;
@@ -153,8 +161,11 @@ router.post('/', (req, res, next) => {
 
                         // Set new intent while keeping other data.
                         conversation.intent = response.result;
-
-                        flow = new change_intent_flow(line_event, conversation);
+                        try {
+                            flow = new change_intent_flow(line_event, conversation);
+                        } catch(err){
+                            return Promise.reject(err);
+                        }
                         return flow.run();
                     } else {
                         if (conversation.previous.confirmed){
@@ -162,7 +173,11 @@ router.post('/', (req, res, next) => {
                             ** ### ASSUME this is "Change Parameter" Flow. ###
                             ** ###############################################
                             */
-                            flow = new change_parameter_flow(line_event, conversation);
+                            try {
+                                flow = new change_parameter_flow(line_event, conversation);
+                            } catch(err){
+                                return Promise.reject(err);
+                            }
                             return flow.run().then(
                                 (response) => {
                                     return response;
@@ -182,7 +197,11 @@ router.post('/', (req, res, next) => {
                                                 confirmed: null
                                             }
                                         }
-                                        flow = new no_way_flow(line_event, conversation);
+                                        try {
+                                            flow = new no_way_flow(line_event, conversation);
+                                        } catch(err){
+                                            return Promise.reject(err);
+                                        }
                                         return flow.run();
                                     }
                                 }
@@ -202,7 +221,11 @@ router.post('/', (req, res, next) => {
                                 confirmed: null
                             }
                         }
-                        flow = new no_way_flow(line_event, conversation);
+                        try {
+                            flow = new no_way_flow(line_event, conversation);
+                        } catch(err){
+                            return Promise.reject(err);
+                        }
                         return flow.run();
                     }
                 },

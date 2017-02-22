@@ -1,12 +1,14 @@
 'use strict';
 
 const memory_retention = process.env.MEMORY_RETENTION;
+const SKILL_PATH = process.env.SKILL_PATH || "../skill/";
 const APIAI_CLIENT_ACCESS_TOKEN = process.env.APIAI_CLIENT_ACCESS_TOKEN;
 
 let Promise = require('bluebird');
 let memory = require('memory-cache');
 let apiai = require('apiai');
 let line = require('../service/line');
+let skill = {};
 let skill_play_music = require('../skill/play-music');
 let skill_show_menu = require('../skill/show-menu');
 let skill_show_calorie = require('../skill/show-calorie');
@@ -23,7 +25,6 @@ module.exports = class Flow {
         this.line_event = line_event;
         this.conversation = conversation;
         this.skill = this._instantiate_skill(this.conversation.intent.action);
-
         console.log(`This skill requires ${Object.keys(this.skill.required_parameter).length} parameters.`);
 
         this.conversation.to_confirm = this._identify_to_confirm_parameter(this.skill.required_parameter, this.conversation.confirmed);
@@ -31,6 +32,28 @@ module.exports = class Flow {
         console.log(`We have ${Object.keys(this.conversation.to_confirm).length} parameters to confirm.`);
     }
 
+    _instantiate_skill(intent){
+        if (!intent){
+            console.log("Intent should have been set but not.");
+            return;
+        }
+
+        // If the intent is not identified, we use faq as skill.
+        if (intent == "input.unknown"){
+            intent = "faq";
+        }
+
+        let Skill;
+        try {
+            Skill = require(SKILL_PATH + intent);
+        } catch (err){
+            console.log(`Cannnot import ${SKILL_PATH}${intent}`);
+            throw(`Cannnot import ${SKILL_PATH}${intent}`);
+        }
+        return new Skill();
+    }
+
+    /*
     _instantiate_skill(intent){
         if (!intent){
             console.log("Intent should have been set but not.");
@@ -70,6 +93,7 @@ module.exports = class Flow {
         }
         return skill;
     }
+    */
 
     _identify_to_confirm_parameter(required_parameter, confirmed){
         let to_confirm = {};
