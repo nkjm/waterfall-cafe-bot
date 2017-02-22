@@ -92,22 +92,22 @@ module.exports = class Flow {
     add_parameter(key, value){
         console.log(`Parsing parameter {${key}: "${value}"}`);
 
-        let parsed_param;
+        let parsed_value;
 
         // Parse the value. If the value is not suitable for this key, exception will be thrown.
         if (this.skill.required_parameter[key]){
             if (!!this.skill.required_parameter[key].parse){
-                parsed_param = this.skill.required_parameter[key].parse(value);
+                parsed_value = this.skill.required_parameter[key].parse(value);
             } else if (!!this.skill.required_parameter[key]["parse_" + key]){
-                parsed_param = this.skill.required_parameter[key]["parse_" + key](value);
+                parsed_value = this.skill.required_parameter[key]["parse_" + key](value);
             } else {
                 throw("Parse method not found.");
             }
         } else if (this.skill.optional_parameter[key]){
             if (!!this.skill.optional_parameter[key].parse){
-                parsed_param = this.skill.optional_parameter[key].parse(value);
+                parsed_value = this.skill.optional_parameter[key].parse(value);
             } else if (!!this.skill.optional_parameter[key]["parse_" + key]){
-                parsed_param = this.skill.optional_parameter[key]["parse_" + key](value);
+                parsed_value = this.skill.optional_parameter[key]["parse_" + key](value);
             } else {
                 throw("Parse method not found.");
             }
@@ -117,10 +117,12 @@ module.exports = class Flow {
             throw("This is not the parameter we care about.");
         }
 
-        console.log(`Adding parameter {${key}: "${parsed_param}"}`);
+        console.log(`Adding parameter {${key}: "${parsed_value}"}`);
 
         // Add the parameter to "confirmed".
-        Object.assign(this.conversation.confirmed, {key: parsed_param});
+        let param = {};
+        param[key] = parsed_value;
+        Object.assign(this.conversation.confirmed, param);
 
         // At the same time, save the parameter key as "previously confirmed" thing.
         this.conversation.previous.confirmed = key;
