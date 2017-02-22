@@ -8,17 +8,6 @@ let Promise = require('bluebird');
 let memory = require('memory-cache');
 let apiai = require('apiai');
 let line = require('../service/line');
-let skill = {};
-let skill_play_music = require('../skill/play-music');
-let skill_show_menu = require('../skill/show-menu');
-let skill_show_calorie = require('../skill/show-calorie');
-let skill_turn_on_light = require('../skill/turn-on-light');
-let skill_turn_off_light = require('../skill/turn-off-light');
-let skill_change_light_color = require('../skill/change-light-color');
-let skill_faq = require('../skill/faq');
-let skill_request = require('../skill/request');
-let skill_clear_conversation = require('../skill/clear-conversation');
-let skill_greeting = require('../skill/greeting');
 
 module.exports = class Flow {
     constructor(line_event, conversation){
@@ -52,48 +41,6 @@ module.exports = class Flow {
         }
         return new Skill();
     }
-
-    /*
-    _instantiate_skill(intent){
-        if (!intent){
-            console.log("Intent should have been set but not.");
-        }
-        let skill;
-        switch (intent) {
-            case "show-menu":
-                skill = new skill_show_menu();
-            break;
-            case "show-calorie":
-                skill = new skill_show_calorie();
-            break;
-            case "play-music":
-                skill = new skill_play_music();
-            break;
-            case "turn-on-light":
-                skill = new skill_turn_on_light();
-            break;
-            case "turn-off-light":
-                skill = new skill_turn_off_light();
-            break;
-            case "change-light-color":
-                skill = new skill_change_light_color();
-            break;
-            case "request":
-                skill = new skill_request();
-            break;
-            case "clear-conversation":
-                skill = new skill_clear_conversation();
-            break;
-            case "greeting":
-                skill = new skill_greeting();
-            break;
-            default:
-                skill = new skill_faq();
-            break;
-        }
-        return skill;
-    }
-    */
 
     _identify_to_confirm_parameter(required_parameter, confirmed){
         let to_confirm = {};
