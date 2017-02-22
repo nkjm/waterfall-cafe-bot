@@ -45,32 +45,6 @@ router.post('/', (req, res, next) => {
     let line_event = req.body.events[0];
     //console.log(line_event);
 
-    /*
-    ** ### Follow Event Handler
-    */
-    if (line_event.type == "follow"){
-        let main = line.getProfile(line_event.source.userId).then(
-            (response) => {
-                let user = response;
-
-                // Upsert User.
-                return wfc.upsertUser(user);
-            },
-            (response) => {
-                console.log("Failed to get LINE User Profile.");
-                return Promise.reject(response);
-            }
-        ).then(
-            (response) => {
-                console.log("End of webhook process.");
-            },
-            (response) => {
-                console.log("Failed to handle follow event.");
-                console.log(response);
-            }
-        )
-        return;
-    } // End of Follow Event Handler
 
     /*
     ** ### Flow Identification ###
